@@ -7,6 +7,7 @@ local process = require("@lune/process")
 local luau = require("@lune/luau")
 
 local Harness = require("./harness")
+local Mocks = require("./mocks")
 
 local filter = process.args[1]
 
@@ -144,9 +145,11 @@ local function runSpec(fileName)
 	end
 	ctx.expect = expect
 	ctx.Harness = Harness
+	ctx.Mocks = Mocks
 
 	Harness.reset()
-	local chunk = luau.load(source, { debugName = fileName })
+	local env = table.clone(Harness.globals)
+	local chunk = luau.load(source, { debugName = fileName, environment = env })
 	local ok, specFn = pcall(chunk)
 	if not ok then
 		results.failed += 1

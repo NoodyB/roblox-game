@@ -310,9 +310,17 @@ end
 Harness.require = harnessRequire
 
 -- Creates a fresh DataModel. Call before each test file that needs isolated module state.
+Harness.closeCallbacks = {}
+
+function VNodeMethods.BindToClose(_self, callback)
+	table.insert(Harness.closeCallbacks, callback)
+end
+
 function Harness.reset()
 	moduleCache = {}
 	services = {}
+	Harness.closeCallbacks = {}
+	baseGlobals.Instance = roblox.Instance
 	local project = serde.decode("json", fs.readFile("default.project.json"))
 	game = newVNode("Game", "DataModel", nil)
 	for key, child in project.tree do
@@ -324,13 +332,13 @@ function Harness.reset()
 	internals[game].props.PlaceId = 0
 	-- GetService: mounted services first, then registered mocks
 	VNodeMethods.GetService = function(self, name)
-		local mounted = VNodeMethods.FindFirstChild(self, name)
-		if mounted then
-			return mounted
-		end
 		local mock = services[name]
 		if mock then
 			return mock
+		end
+		local mounted = VNodeMethods.FindFirstChild(self, name)
+		if mounted then
+			return mounted
 		end
 		error("Service not mocked in harness: " .. tostring(name), 2)
 	end

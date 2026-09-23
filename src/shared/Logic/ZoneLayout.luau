@@ -69,7 +69,7 @@ ZoneLayout.PropSets = PROP_SETS
 local PROPS_PER_ZONE = 10
 local PATH_HALF_WIDTH = 10
 local SELL_PAD_OFFSET = 54 -- distance from zone center along X
-local PAD_MASK_RADIUS = 8
+local PAD_MASK_RADIUS = 11
 
 function ZoneLayout.cellsPerSide(): number
 	return math.floor(GameConfig.DebrisAreaSize / GameConfig.CellSize)
@@ -109,7 +109,7 @@ end
 -- Where players arrive when teleporting to a zone (just inside the gate).
 function ZoneLayout.spawnPoint(zoneId: number): (number, number)
 	if zoneId == 0 then
-		return 0, 20
+		return -22, 0
 	end
 	local minX = ZoneLayout.bounds(zoneId)
 	return minX + 8, 0
