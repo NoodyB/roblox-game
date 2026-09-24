@@ -160,7 +160,18 @@ function methods.Destroy(self)
 	self.Parent = nil
 end
 function methods.SetAttribute(self, name, value)
-	instanceData[self].attributes[name] = value
+	local d = instanceData[self]
+	d.attributes[name] = value
+	local s = d.attrSignals and d.attrSignals[name]
+	if s then
+		s:Fire()
+	end
+end
+function methods.GetAttributeChangedSignal(self, name)
+	local d = instanceData[self]
+	d.attrSignals = d.attrSignals or {}
+	d.attrSignals[name] = d.attrSignals[name] or Mocks.signal()
+	return d.attrSignals[name]
 end
 function methods.GetAttribute(self, name)
 	return instanceData[self].attributes[name]

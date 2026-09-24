@@ -144,10 +144,6 @@ local function apply(state: { [string]: any })
 		text.Text = if step == 4 then string.format(template, Format.abbreviate(Zones[2].unlockCost)) else template
 	end
 	pulseShop(step == 3)
-	if step >= DONE and beam then
-		beam:Destroy()
-		beam = nil
-	end
 end
 
 function Tutorial.mount(gui: ScreenGui)
@@ -184,20 +180,50 @@ function Tutorial:Init()
 	ClientState.Changed:Connect(apply)
 end
 
+-- After the tutorial, the same beam becomes a "debris radar" that points at the last piles once a
+-- zone is nearly clean, so finishing a wave is a quick hunt instead of a frustrating search.
+local RADAR_THRESHOLD = 0.85
+
+local function radarTarget(): Vector3?
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if not root then
+		return nil
+	end
+	local p = root.Position
+	local zoneId = ZoneLayout.zoneAt(p.X, p.Z)
+	if not zoneId or zoneId < 1 then
+		return nil
+	end
+	local clean = DebrisRenderer.cleanFraction(zoneId)
+	if clean < RADAR_THRESHOLD or clean >= 1 then
+		return nil
+	end
+	return DebrisRenderer.nearestDebris(p.X, p.Z, zoneId)
+end
+
 function Tutorial:Start()
 	task.spawn(function()
 		while true do
+			local target: Vector3?
+			local radar = false
 			if step < DONE then
-				local target = targetFor(step)
-				if target then
-					targetPart.CFrame = CFrame.new(target)
-					local b = ensureBeam()
-					if b then
-						b.Enabled = true
-					end
-				elseif beam then
-					beam.Enabled = false
+				target = targetFor(step)
+			else
+				target = radarTarget()
+				radar = target ~= nil
+			end
+			if target then
+				targetPart.CFrame = CFrame.new(target)
+				local b = ensureBeam()
+				if b then
+					b.Enabled = true
+					b.Color = ColorSequence.new(if radar then Colors.Blue else Colors.Gold)
+					b.Width0 = if radar then 0.6 else 1.2
+					b.Width1 = b.Width0
 				end
+			elseif beam then
+				beam.Enabled = false
 			end
 			task.wait(0.5)
 		end

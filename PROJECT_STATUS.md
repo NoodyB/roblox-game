@@ -1,0 +1,59 @@
+# Project status: Sweep Squad
+
+_Last updated: 2026-09-24 (end of cloud session 1)_
+
+## Current objective
+Ship **Sweep Squad**, a co-op cleaning incremental for Roblox (mobile and PC), as the first product of an AI-assisted Roblox studio.
+
+## Selected concept
+Co-op cleaning incremental with 8 themed zones, collectible critters, zone-clear Golden Gusts, rebirths and perks, and a non-gacha store. Rationale: [docs/Games/Sweep Squad/Concept Selection.md](docs/Games/Sweep%20Squad/Concept%20Selection.md).
+
+## Phase
+**Milestone 7 (QA).** The implementation is complete and has passed automated tests. **It has not been playtested inside Roblox Studio**; that needs the owner's machine.
+
+## Completed features (code + offline tests)
+- Server-authoritative core loop: collect → sell → upgrade → unlock, across 8 zones plus the hub town.
+- Procedural world: 1,556 parts, props, landmarks, gates, sell stations, leaderboards.
+- Critters: 24 species, free drops with pity, equip slots, golden merge, followers, and a book showing odds.
+- Co-op: zone clears with contributor bonuses, alternating golden waves, squad bonus, server-wide Golden Storm.
+- Rebirth (multiplier and tokens) plus 5 perks. Daily quests, a 7-day streak, and a tutorial with a guide beam that doubles as a debris radar.
+- Persistence: session-locked DataStore profiles, autosave, shutdown save, migration and sanitizing.
+- Monetization: 4 passes and 6 products. Idempotent receipts, save-before-grant. IDs still need configuring.
+- Client: HUD, 7 windows, responsive scaling for phone to PC, effects, sounds, loading screen, PC hotkeys.
+- Analytics: onboarding funnel, economy, progression and custom events.
+- Tooling: 105 tests, lint, format, place build and validator, economy simulator, promo concept art.
+
+## Remaining work
+| Item | Owner | Notes |
+|---|---|---|
+| Studio playtest checklist | **You** | [Studio Setup & Playtest Guide](docs/Games/Sweep%20Squad/Studio%20Setup%20%26%20Playtest%20Guide.md) |
+| Fix issues found in Studio | Claude (next session) | Paste Output errors into Known Issues or an issue |
+| Real-device performance check | **You** | Mid-range phone; record FPS in Testing & QA |
+| Create passes and products, paste IDs | **You** | [Monetization](docs/Games/Sweep%20Squad/Monetization.md) checklist |
+| Licensed music and nicer SFX | **You** or Claude | [Assets & Audio](docs/Games/Sweep%20Squad/Assets%20%26%20Audio.md) |
+| Real screenshots for thumbnails | **You** | Concepts are in `marketing/` |
+| Publish publicly | **You (approval)** | After a private test |
+| Halloween update | Claude | Planned for October 2026 |
+
+## Known issues
+See [Known Issues](docs/Games/Sweep%20Squad/Known%20Issues.md). There are no known failing tests. The main risks are in-engine visual offsets (gear, followers) and real-device performance.
+
+## Last successful test results (2026-09-24)
+- `./tools/check.sh` passes all steps: stylua ✅, selene 0/0 ✅, **105 passed / 0 failed** ✅, rojo build ✅, place validation ✅.
+
+## Development environment
+- Cloud: Ubuntu 24.04. Toolchain built from crates.io (GitHub downloads are blocked): Rojo 7.7.0, Lune 0.10.5, Selene 0.31.0, StyLua 2.5.2.
+- Local (Windows): `rokit install` from `rokit.toml`.
+
+## Important commands
+```
+lune run tests/run                      # all tests
+./tools/check.sh                        # full gate
+rojo build default.project.json -o build/SweepSquad.rbxl
+rojo serve                              # live sync to Studio
+lune run tools/simulate_economy.luau    # balance check
+```
+
+## Next implementation task
+1. Apply fixes from the owner's Studio playtest, starting with any Output errors.
+2. Then the Halloween "Haunted Hollow" seasonal event: a reskin of zone 1 via config, 3 seasonal critters, and a limited quest.

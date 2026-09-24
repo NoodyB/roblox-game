@@ -142,17 +142,17 @@ function HUD.mount(gui: ScreenGui)
 	-- Menu buttons
 	local menu = C.new("Frame", {
 		Name = "Menu",
-		Size = UDim2.fromOffset(84, 560),
-		Position = UDim2.new(0, 12, 0.56, 0),
+		Size = UDim2.fromOffset(84, 470),
+		Position = UDim2.new(0, 12, 0.5, 0),
 		AnchorPoint = Vector2.new(0, 0.5),
 		BackgroundTransparency = 1,
 		Parent = gui,
-	}, { C.list(Enum.FillDirection.Vertical, 10, Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Center) })
+	}, { C.list(Enum.FillDirection.Vertical, 8, Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Center) })
 	for index, item in HUD.MenuItems do
 		local button = C.button({
 			Name = item.key,
 			Text = "",
-			Size = UDim2.fromOffset(76, 70),
+			Size = UDim2.fromOffset(76, 62),
 			Color = item.color,
 			DarkColor = item.dark,
 			LayoutOrder = index,
@@ -182,7 +182,7 @@ function HUD.mount(gui: ScreenGui)
 	local settings = C.button({
 		Name = "Settings",
 		Text = "⚙️",
-		Size = UDim2.fromOffset(52, 48),
+		Size = UDim2.fromOffset(52, 44),
 		Color = Colors.Grey,
 		DarkColor = Colors.GreyDark,
 		LayoutOrder = 100,

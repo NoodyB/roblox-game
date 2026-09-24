@@ -41,7 +41,7 @@ local expected = {
 	{ ReplicatedStorage, "Shared.World.MapBuilder", "ModuleScript" },
 	{ ReplicatedStorage, "Shared.Net.Remotes", "ModuleScript" },
 }
-for _, service in { "Net", "DataService", "PassService", "WorldService", "PlayerService", "CritterService", "DebrisService", "QuestService", "ShopService", "MonetizationService", "LeaderboardService" } do
+for _, service in { "Net", "DataService", "PassService", "WorldService", "PlayerService", "CritterService", "DebrisService", "QuestService", "ShopService", "MonetizationService", "LeaderboardService", "DebugService" } do
 	table.insert(expected, { ServerScriptService, "Server.Services." .. service, "ModuleScript" })
 end
 for _, entry in expected do
