@@ -257,6 +257,17 @@ return function(t)
 		end)
 	end)
 
+	describe("performance guard", function()
+		it("reduces graphics only for sustained low FPS", function()
+			local PerformanceGuard = R(Client .. "Controllers.PerformanceGuard")
+			PerformanceGuard:Init()
+			expect(PerformanceGuard.shouldReduce(400, 20, false)).toBe(true) -- 20 fps
+			expect(PerformanceGuard.shouldReduce(1200, 20, false)).toBe(false) -- 60 fps
+			expect(PerformanceGuard.shouldReduce(400, 20, true)).toBe(false) -- already low
+			expect(PerformanceGuard.shouldReduce(0, 0, false)).toBe(false)
+		end)
+	end)
+
 	describe("chat tags", function()
 		it("prefixes VIP and rebirth tags", function()
 			local ChatTags = R(Client .. "Controllers.ChatTags")

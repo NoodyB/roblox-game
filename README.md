@@ -6,7 +6,11 @@ The whole game is code. The world, props, critters, UI and effects are generated
 
 > Status: **complete Roblox-compatible implementation, not yet playtested in Roblox Studio.** See [PROJECT_STATUS.md](PROJECT_STATUS.md) and the [Studio Setup & Playtest Guide](docs/Games/Sweep%20Squad/Studio%20Setup%20%26%20Playtest%20Guide.md).
 
-## Quick start on Windows
+## Fastest way to play (no tools needed)
+
+Download **[`release/SweepSquad.rbxl`](release/SweepSquad.rbxl)** and double-click it to open in Roblox Studio, then press **Play** (F5). The file is rebuilt from source with `./tools/release.sh`.
+
+## Quick start on Windows (development)
 
 1. Install the toolchain with [Rokit](https://github.com/rojo-rbx/rokit): run `rokit install` in this folder. This installs Rojo, Lune, Selene and StyLua at the versions pinned in `rokit.toml`.
 2. Build a place file with `rojo build default.project.json -o build/SweepSquad.rbxl`.

@@ -5,6 +5,7 @@
 *.rbxm
 *.rbxmx
 !/assets/**/*.rbxm
+!/release/*.rbxl
 
 # Tooling
 /roblox.yml

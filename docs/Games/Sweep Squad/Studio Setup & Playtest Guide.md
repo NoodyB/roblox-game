@@ -15,7 +15,9 @@ These are the steps that need your local Roblox Studio. The cloud session could 
 6. Optional: `lune run tests/run` should report `104 passed, 0 failed`.
 
 ## Open the game
-**Option A: place file (simplest)**
+**Option 0: prebuilt file (no tools at all).** Download `release/SweepSquad.rbxl` from the GitHub repo (branch `claude/kind-brahmagupta-hqjve7`, or `main` once merged) and double-click it. This skips the one-time setup above. You only need that setup to edit code.
+
+**Option A: build the place file yourself**
 1. `rojo build default.project.json -o build/SweepSquad.rbxl`
 2. Double-click `build/SweepSquad.rbxl`.
 
