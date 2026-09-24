@@ -16,6 +16,8 @@ tags: [devlog]
 - Test harness plus 105 tests (logic, server, world, client UI). Place builder plus validator.
 - Docs vault, promo concept art, launch plan, financial model.
 
+- Later in the session: promo codes, VIP and rebirth chat tags, invite button and squad chip, seasonal event framework plus Haunted Hollow (Halloween), NaN-teleport hardening, and loop-body tests. 115 tests pass.
+
 **Important decisions**
 - Server-authoritative collection from positions, with no client collect remote.
 - No paid random items anywhere.

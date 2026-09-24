@@ -27,6 +27,9 @@ updated: 2026-09-24
 - **Perks (tokens).** Golden Touch (+5% coins per level, 20 levels), Deep Pockets (+10% bag), Quick Feet (+1 speed), Critter Whisperer (+10% luck), and Head Start (keep +1 vacuum and bag tier per level after rebirth).
 - **Daily systems.** Three daily quests (collect, sell, earn, find a critter, help clear, golden debris, play minutes, upgrade) reset at 00:00 UTC and are generated deterministically per player per day. After the first rebirth, finishing all three earns a Rebirth Token. A 7-day login streak escalates rewards, and day 7 adds 15 minutes of 2x Coins.
 - **Leaderboards.** Global boards in the hub: top cleaners by lifetime debris, and top rebirths.
+- **Seasonal events** (`Config/Events.luau`). **Haunted Hollow** runs 2026-10-01 to 11-04 UTC. 20% of critter finds become one of 3 free event critters: Candy Bat, Ghost Pup and Jack-o'-Kitten. Backyard Lane gets a purple and orange palette, jack-o'-lanterns ring the hub, and the Critter Book shows the event odds.
+- **Promo codes** (`Config/Codes.luau`). Each code is redeemable once per player in Settings, for coins, boosts or a critter. They power creator videos and social posts (`SWEEPSQUAD`, `LAUNCH`, `SQUIRREL`).
+- **Social:** an "👋 Invite" button (Roblox invite prompt), a live "👥 Squad +X%" chip when teammates are close, and `[VIP]` / `[♻️N]` chat tags.
 
 ## 4. World
 | # | Zone | Debris | Coins/unit | Unlock | Signature props |
@@ -80,13 +83,13 @@ The server simulates everything at 5 Hz. Debris lives as a byte buffer per zone.
 | Persistence with session locking, autosave and shutdown save | ✅ Tested against mocks |
 | Critters: drops, equip, golden merge, followers, book with odds | ✅ Tested offline |
 | Quests, streak, rebirth, perks, leaderboards | ✅ Tested offline (leaderboards untested) |
-| Mobile and PC UI for every system | ✅ Built in the validating test environment (2,215 instances) |
+| Mobile and PC UI for every system | ✅ Built in the validating test environment (2,325 instances) |
 | Monetization infrastructure (passes, products, receipts) | ✅ Tested against mocks; product IDs pending |
 | Playable end to end in Roblox Studio | ⏳ Needs a local Studio session ([[Studio Setup & Playtest Guide]]) |
 | 60 FPS on mid-range phones | ⏳ Needs device testing |
 
 ## 13. Expansion roadmap
-1. **Seasonal events:** Halloween Haunted Hollow in October 2026, and a Winter wave with snow on every zone.
+1. **Seasonal events:** the framework and Halloween "Haunted Hollow" are ✅ implemented. Next is Winter "Snow Day" (add an entry to `Config/Events.luau` plus 3 critters).
 2. **Trading of critters** between players, with anti-scam confirmation.
 3. **Vacuum cosmetics** (skins and trails), sold directly and never randomized.
 4. **New zones** (Underwater Reef, Cloud Kingdom), added through config plus a prop set.

@@ -51,6 +51,9 @@ Concept images are generated in `marketing/`, rendered from HTML with the same p
 | 4 | "12 players, 1 zone" | Co-op clear with the squad bonus |
 Record in Studio with the Recorder, or ask a friend. Post on TikTok, YouTube Shorts and Instagram Reels with #roblox, #robloxgames and #sweepsquad. **Only post footage of your own account and game.**
 
+## Promo codes
+Codes are live in `src/shared/Config/Codes.luau` and redeemed in Settings: `SWEEPSQUAD` (5 bags of coins), `LAUNCH` (15 minutes of 2x Coins) and `SQUIRREL` (a free critter). Add a new code per video or creator. Codes let you see which channel brings players, because every redemption logs a `CodeRedeemed` analytics event.
+
 ## Creator outreach (free first)
 Approach small Roblox YouTubers (1k-50k subscribers) who cover simulators. Offer early access and a shout-out code system later. Do not pay for promotion without approval. Don't buy fake visits, likes or bots; that is against the Terms of Use and poisons the recommendation signals.
 
