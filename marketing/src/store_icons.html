@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Sweep Squad store icons</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #222; }
+  #stage { width: 512px; height: 512px; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+// 512x512 icons for game passes and developer products. Roblox shows game pass icons cropped to a
+// circle, so all art and text stays inside the central circle (radius ~230).
+const INK = "#4a2e1f";
+const FONT = "Fredoka, 'Arial Rounded MT Bold', sans-serif";
+
+function rays(color = "#fff", opacity = 0.13) {
+  let d = "";
+  for (let i = 0; i < 18; i++) {
+    const a0 = (i / 18) * Math.PI * 2, a1 = a0 + Math.PI / 18;
+    d += `M256,256 L${256 + 400 * Math.cos(a0)},${256 + 400 * Math.sin(a0)} L${256 + 400 * Math.cos(a1)},${256 + 400 * Math.sin(a1)} Z `;
+  }
+  return `<path d="${d}" fill="${color}" opacity="${opacity}"/>`;
+}
+
+function sparkle(x, y, s, color = "#fff") {
+  return `<path transform="translate(${x},${y}) scale(${s})" d="M0,-20 C3,-5 5,-3 20,0 C5,3 3,5 0,20 C-3,5 -5,3 -20,0 C-5,-3 -3,-5 0,-20 Z" fill="${color}"/>`;
+}
+
+// gold coin with a thickness edge and a leaf emblem
+function coin(x, y, r, rot = 0, face = "") {
+  const inner = face
+    ? `<text x="0" y="${r * 0.3}" text-anchor="middle" font-family="${FONT}" font-weight="700" font-size="${r * 0.9}" fill="#b86a10">${face}</text>`
+    : `<path d="M0,${-r * 0.45} C${r * 0.3},${-r * 0.28} ${r * 0.32},${r * 0.14} 0,${r * 0.45} C${-r * 0.32},${r * 0.14} ${-r * 0.3},${-r * 0.28} 0,${-r * 0.45} Z" fill="#e59a1a"/>
+       <path d="M0,${-r * 0.36} L0,${r * 0.4}" stroke="#ffe28a" stroke-width="${r * 0.06}" stroke-linecap="round"/>`;
+  return `<g transform="translate(${x},${y}) rotate(${rot})" stroke-linejoin="round">
+    <circle cx="0" cy="${r * 0.12}" r="${r}" fill="#d98a14" stroke="${INK}" stroke-width="${Math.max(5, r * 0.09)}"/>
+    <circle cx="0" cy="0" r="${r}" fill="#ffc83d" stroke="${INK}" stroke-width="${Math.max(5, r * 0.09)}"/>
+    <circle cx="0" cy="0" r="${r * 0.74}" fill="none" stroke="#e59a1a" stroke-width="${r * 0.07}"/>
+    ${inner}
+    <path d="M${-r * 0.55},${-r * 0.5} A${r * 0.75},${r * 0.75} 0 0 1 ${-r * 0.1},${-r * 0.78}" stroke="#fff6cf" stroke-width="${r * 0.1}" stroke-linecap="round" fill="none"/>
+  </g>`;
+}
+
+function label(text, size = 96, color = "#fff", y = 452) {
+  return `<text x="256" y="${y}" text-anchor="middle" font-family="${FONT}" font-weight="700" font-size="${size}"
+    fill="${color}" stroke="${INK}" stroke-width="${size * 0.17}" paint-order="stroke" letter-spacing="2">${text}</text>`;
+}
+
+function pill(text, fill = "#ffffff", textColor = INK, y = 418, size = 50) {
+  const w = text.length * size * 0.62 + 56;
+  return `<g>
+    <rect x="${256 - w / 2}" y="${y}" width="${w}" height="${size + 28}" rx="${(size + 28) / 2}" fill="${fill}" stroke="${INK}" stroke-width="9"/>
+    <text x="256" y="${y + size + 4}" text-anchor="middle" font-family="${FONT}" font-weight="700" font-size="${size}" fill="${textColor}">${text}</text>
+  </g>`;
+}
+
+function frame(c1, c2, body) {
+  return `<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="bg" cx="50%" cy="42%" r="72%">
+        <stop offset="0%" stop-color="${c1}"/>
+        <stop offset="100%" stop-color="${c2}"/>
+      </radialGradient>
+      <radialGradient id="glow" cx="50%" cy="45%" r="50%">
+        <stop offset="0%" stop-color="#fff" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="512" height="512" fill="url(#bg)"/>
+    ${rays()}
+    <circle cx="256" cy="220" r="200" fill="url(#glow)"/>
+    ${body}
+  </svg>`;
+}
+
+const ICONS = {
+  // ---------------------------------------------------------------- game passes
+  pass_vip: () => frame("#d7b8ff", "#5a2fc0", `
+    <g stroke="${INK}" stroke-width="11" stroke-linejoin="round">
+      <path d="M130,300 L108,140 L192,215 L256,105 L320,215 L404,140 L382,300 Z" fill="#ffc83d"/>
+      <path d="M150,280 L136,190 L196,245 L256,160 L316,245 L376,190 L362,280 Z" fill="#ffdb6e" stroke="none"/>
+      <rect x="124" y="284" width="264" height="66" rx="16" fill="#f0a820"/>
+      <circle cx="108" cy="140" r="20" fill="#fff1b3"/>
+      <circle cx="256" cy="105" r="22" fill="#fff1b3"/>
+      <circle cx="404" cy="140" r="20" fill="#fff1b3"/>
+      <circle cx="196" cy="317" r="15" fill="#ff5a6e"/>
+      <circle cx="256" cy="317" r="18" fill="#4fb3ff"/>
+      <circle cx="316" cy="317" r="15" fill="#5bd67a"/>
+    </g>
+    ${sparkle(96, 250, 1.1)} ${sparkle(420, 250, 0.9)} ${sparkle(330, 88, 0.8)}
+    ${label("VIP", 118, "#ffe28a", 462)}`),
+
+  pass_2x_coins: () => frame("#b8f7a8", "#23884a", `
+    ${coin(190, 190, 88, -18)}
+    ${coin(318, 212, 104, 12)}
+    ${coin(236, 290, 70, 0)}
+    ${sparkle(110, 110, 1)} ${sparkle(410, 120, 0.8)}
+    ${label("2x", 150, "#ffe28a", 470)}`),
+
+  pass_auto_sell: () => frame("#aef5ee", "#177f8c", `
+    <g fill="none" stroke-linecap="round">
+      <path d="M118,230 A140,140 0 0 1 350,120" stroke="${INK}" stroke-width="34"/>
+      <path d="M118,230 A140,140 0 0 1 350,120" stroke="#fff" stroke-width="18"/>
+      <path d="M394,250 A140,140 0 0 1 162,360" stroke="${INK}" stroke-width="34"/>
+      <path d="M394,250 A140,140 0 0 1 162,360" stroke="#fff" stroke-width="18"/>
+    </g>
+    <g stroke="${INK}" stroke-width="9" stroke-linejoin="round">
+      <path d="M322,92 L382,112 L338,158 Z" fill="#fff"/>
+      <path d="M190,388 L130,368 L174,322 Z" fill="#fff"/>
+    </g>
+    <g stroke="${INK}" stroke-width="11" stroke-linejoin="round">
+      <path d="M196,190 C170,215 162,300 184,330 C210,352 302,352 328,330 C350,300 342,215 316,190 Z" fill="#e0483c"/>
+      <path d="M222,176 C222,146 290,146 290,176" fill="none" stroke-width="14"/>
+      <rect x="198" y="168" width="116" height="40" rx="16" fill="#b8352c"/>
+      <path d="M176,236 C168,280 170,316 188,334" fill="none" stroke="#8a2820" stroke-width="10"/>
+      <path d="M336,236 C344,280 342,316 324,334" fill="none" stroke="#8a2820" stroke-width="10"/>
+      <rect x="226" y="250" width="60" height="54" rx="12" fill="#f06a5c"/>
+    </g>
+    ${coin(256, 124, 34, 10)}
+    ${label("AUTO", 104, "#fff", 466)}`),
+
+  pass_critter_slots: () => frame("#ffc6e3", "#c2336f", `
+    <g stroke="${INK}" stroke-width="11">
+      <ellipse cx="256" cy="262" rx="92" ry="80" fill="#fff4e6"/>
+      <ellipse cx="160" cy="176" rx="36" ry="46" fill="#fff4e6" transform="rotate(-24 160 176)"/>
+      <ellipse cx="222" cy="128" rx="36" ry="48" fill="#fff4e6" transform="rotate(-8 222 128)"/>
+      <ellipse cx="292" cy="128" rx="36" ry="48" fill="#fff4e6" transform="rotate(8 292 128)"/>
+      <ellipse cx="354" cy="176" rx="36" ry="46" fill="#fff4e6" transform="rotate(24 354 176)"/>
+    </g>
+    <ellipse cx="256" cy="272" rx="56" ry="46" fill="#ffb3cf"/>
+    <g stroke="${INK}" stroke-width="10">
+      <circle cx="384" cy="316" r="52" fill="#5bd67a"/>
+    </g>
+    <text x="384" y="340" text-anchor="middle" font-family="${FONT}" font-weight="700" font-size="66" fill="#fff" stroke="${INK}" stroke-width="10" paint-order="stroke">+2</text>
+    ${label("SLOTS", 96, "#fff", 458)}`),
+
+  // ---------------------------------------------------------------- developer products
+  product_coin_pouch: () => frame("#c4ebff", "#2f7fd0", `
+    <g stroke="${INK}" stroke-width="11" stroke-linejoin="round">
+      <path d="M200,170 C130,230 130,350 196,372 C236,386 276,386 316,372 C382,350 382,230 312,170 Z" fill="#d49452"/>
+      <path d="M186,138 C220,160 292,160 326,138 L312,176 C282,190 230,190 200,176 Z" fill="#b87436"/>
+      <path d="M232,176 C240,196 272,196 280,176" fill="none"/>
+    </g>
+    <path d="M186,236 C176,290 186,330 212,350" stroke="#f0b576" stroke-width="12" fill="none" stroke-linecap="round"/>
+    ${coin(256, 282, 50, 0)}
+    ${coin(368, 346, 38, 20)}
+    ${coin(146, 350, 32, -15)}
+    ${label("POUCH", 88, "#fff", 462)}`),
+
+  product_coin_crate: () => frame("#b3dcff", "#1f5fb8", `
+    ${coin(196, 158, 50, -20)} ${coin(300, 146, 56, 15)} ${coin(248, 128, 44, 0)} ${coin(356, 186, 40, 25)} ${coin(150, 196, 38, -30)}
+    <g stroke="${INK}" stroke-width="11" stroke-linejoin="round">
+      <path d="M118,200 L394,200 L380,372 L132,372 Z" fill="#c07a3c"/>
+      <path d="M118,200 L394,200 L394,236 L118,236 Z" fill="#a0602a"/>
+      <line x1="126" y1="300" x2="386" y2="300"/>
+      <line x1="200" y1="236" x2="196" y2="372"/>
+      <line x1="312" y1="236" x2="316" y2="372"/>
+    </g>
+    <path d="M140,256 L180,256" stroke="#e3a262" stroke-width="10" stroke-linecap="round"/>
+    ${sparkle(96, 110, 0.9)} ${sparkle(424, 104, 1.1)}
+    ${label("CRATE", 88, "#fff", 462)}`),
+
+  product_coin_vault: () => frame("#8ea6ff", "#141d63", `
+    <circle cx="256" cy="220" r="170" fill="#ffd966" opacity="0.35"/>
+    <g stroke="${INK}" stroke-width="11">
+      <circle cx="256" cy="210" r="140" fill="#9aa7b8"/>
+      <circle cx="256" cy="210" r="104" fill="#c8d2de"/>
+      <circle cx="256" cy="210" r="30" fill="#6d7a8c"/>
+      <g stroke-linecap="round" stroke-width="16">
+        <line x1="256" y1="130" x2="256" y2="290"/>
+        <line x1="176" y1="210" x2="336" y2="210"/>
+        <line x1="199" y1="153" x2="313" y2="267"/>
+        <line x1="313" y1="153" x2="199" y2="267"/>
+      </g>
+      <circle cx="256" cy="210" r="26" fill="#ffc83d"/>
+    </g>
+    <g fill="#6d7a8c" stroke="${INK}" stroke-width="5">
+      <circle cx="256" cy="84" r="9"/><circle cx="256" cy="336" r="9"/><circle cx="130" cy="210" r="9"/><circle cx="382" cy="210" r="9"/>
+    </g>
+    ${coin(150, 340, 52, -15)} ${coin(362, 336, 56, 15)} ${coin(256, 358, 60, 0)} ${coin(206, 310, 40, 10)} ${coin(310, 306, 42, -10)}
+    ${sparkle(106, 104, 1)} ${sparkle(410, 110, 1.2)}
+    ${label("VAULT", 88, "#ffe28a", 470)}`),
+
+  product_boost_coins: () => frame("#fff0a8", "#e0761a", `
+    ${coin(236, 214, 124, -8, "2x")}
+    <g stroke="${INK}" stroke-width="11" stroke-linejoin="round">
+      <path d="M372,120 L312,236 L360,236 L322,344 L420,206 L370,206 L404,120 Z" fill="#fff36b"/>
+    </g>
+    ${sparkle(110, 100, 1)}
+    ${pill("30 MIN", "#ffffff", INK, 386, 56)}`),
+
+  product_boost_collect: () => frame("#c8d0ff", "#3b3fc4", `
+    <g stroke="${INK}" stroke-width="10">
+      <ellipse cx="256" cy="110" rx="150" ry="36" fill="#e6f6ff"/>
+      <ellipse cx="248" cy="170" rx="120" ry="32" fill="#cdeeff"/>
+      <ellipse cx="262" cy="226" rx="92" ry="28" fill="#b3e4ff"/>
+      <ellipse cx="250" cy="276" rx="66" ry="24" fill="#9ad8ff"/>
+      <ellipse cx="258" cy="320" rx="42" ry="18" fill="#80ccff"/>
+      <ellipse cx="252" cy="354" rx="22" ry="12" fill="#66c0ff"/>
+    </g>
+    <g stroke="${INK}" stroke-width="5">
+      <path transform="translate(118,190) rotate(-30)" d="M0,-24 C16,-14 18,6 0,24 C-18,6 -16,-14 0,-24 Z" fill="#f07a2a"/>
+      <path transform="translate(392,176) rotate(40)" d="M0,-24 C16,-14 18,6 0,24 C-18,6 -16,-14 0,-24 Z" fill="#ffc23a"/>
+      <path transform="translate(360,286) rotate(-60)" d="M0,-20 C13,-12 15,5 0,20 C-15,5 -13,-12 0,-20 Z" fill="#e8502c"/>
+      <path transform="translate(150,300) rotate(20)" d="M0,-20 C13,-12 15,5 0,20 C-15,5 -13,-12 0,-20 Z" fill="#8fd35a"/>
+    </g>
+    ${pill("30 MIN", "#ffffff", INK, 386, 56)}`),
+
+  product_golden_storm: () => frame("#ffe89a", "#8a3fc0", `
+    <g stroke="${INK}" stroke-width="11" stroke-linejoin="round">
+      <path d="M130,214 C96,214 90,160 128,150 C130,100 196,86 220,120 C240,76 320,76 334,126 C372,110 420,140 404,184 C430,196 424,236 392,236 L140,236 C126,236 120,226 130,214 Z" fill="#ffd24a"/>
+    </g>
+    <path d="M150,168 C160,140 190,132 212,146" stroke="#fff3b8" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <g stroke="${INK}" stroke-width="9" stroke-linejoin="round">
+      <path d="M262,236 L236,300 L264,300 L246,356 L300,284 L272,284 L292,236 Z" fill="#fff36b"/>
+    </g>
+    ${coin(160, 300, 34, -20)} ${coin(360, 296, 38, 15)} ${coin(206, 360, 28, 10)} ${coin(318, 356, 26, -10)}
+    ${sparkle(96, 96, 1)} ${sparkle(420, 90, 0.9)} ${sparkle(430, 330, 0.7)} ${sparkle(86, 330, 0.7)}
+    ${pill("5 MIN · SERVER", "#ffffff", INK, 398, 44)}`),
+};
+
+window.iconNames = Object.keys(ICONS);
+window.showIcon = (name) => { document.getElementById("stage").innerHTML = ICONS[name](); };
+window.ready = true;
+</script>
+</body>
+</html>

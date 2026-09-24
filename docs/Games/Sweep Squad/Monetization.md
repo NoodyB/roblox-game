@@ -12,25 +12,27 @@ updated: 2026-09-24
 5. **Social purchases are positive-sum.** A Golden Storm helps everyone in the server and credits the buyer.
 
 ## Catalogue (config: `src/shared/Config/Products.luau`)
-| Type | Key | Suggested price (R$) | Effect |
-|---|---|---|---|
-| Pass | VIP | 199 | ×1.2 coins, VIP chat tag, +1 critter slot |
-| Pass | DoubleCoins | 399 | ×2 coins from selling, forever |
-| Pass | AutoSell | 149 | The bag sells itself when full, anywhere |
-| Pass | CritterSlots | 249 | +2 equipped critters |
-| Product | CoinsSmall | 49 | Coins = 3 full bags × best zone value × rebirth multiplier |
-| Product | CoinsMedium | 149 | 12 bags |
-| Product | CoinsLarge | 399 | 40 bags |
-| Product | BoostCoins | 59 | 2x coins for 30 minutes of play (stacks) |
-| Product | BoostCollect | 59 | 2x power and +3 reach for 30 minutes of play (stacks) |
-| Product | GoldenStorm | 99 | Server-wide 2x coins for 5 minutes; the buyer is named |
+| Type | Key | Name to use on Roblox | Suggested price (R$) | Effect | Icon (`marketing/store_icons/`) |
+|---|---|---|---|---|---|
+| Pass | VIP | VIP | 199 | ×1.2 coins, VIP chat tag, +1 critter slot | `pass_vip.png` |
+| Pass | DoubleCoins | 2x Coins | 399 | ×2 coins from selling, forever | `pass_2x_coins.png` |
+| Pass | AutoSell | Auto Sell | 149 | The bag sells itself when full, anywhere | `pass_auto_sell.png` |
+| Pass | CritterSlots | +2 Critter Slots | 249 | +2 equipped critters | `pass_critter_slots.png` |
+| Product | CoinsSmall | Coin Pouch | 49 | Coins = 3 full bags × best zone value × rebirth multiplier | `product_coin_pouch.png` |
+| Product | CoinsMedium | Coin Crate | 149 | 12 bags | `product_coin_crate.png` |
+| Product | CoinsLarge | Coin Vault | 399 | 40 bags | `product_coin_vault.png` |
+| Product | BoostCoins | 2x Coins (30 min) | 59 | 2x coins for 30 minutes of play (stacks) | `product_boost_coins.png` |
+| Product | BoostCollect | Super Suction (30 min) | 59 | 2x power and +3 reach for 30 minutes of play (stacks) | `product_boost_collect.png` |
+| Product | GoldenStorm | Golden Storm | 99 | Server-wide 2x coins for 5 minutes; the buyer is named | `product_golden_storm.png` |
+
+Icons are 512×512 PNGs, drawn so everything stays inside the circle Roblox uses to crop game pass icons. Source: `marketing/src/store_icons.html`. Re-render with `NODE_PATH=$(npm root -g) node marketing/src/render_store_icons.js`.
 
 Prices are hints for the store UI; the real price is fetched from Roblox. Review them after launch against conversion data (see *Price testing* below). Roblox's Price Optimization tool can A/B test prices later.
 
 ## Setup checklist (you: needs your Roblox account)
 1. Publish the place: Studio → File → Publish to Roblox.
-2. Go to Creator Dashboard → your experience → **Monetization → Passes**. Create the 4 passes with icons. Placeholder icons are fine; see [[Marketing & Launch Plan]] for icon ideas. Copy each pass ID.
-3. **Monetization → Developer Products:** create the 6 products and copy each product ID.
+2. Go to Creator Dashboard → your experience → **Monetization → Passes**. Create the 4 passes using the names, prices and icons in the table above. Copy each pass ID.
+3. **Monetization → Developer Products:** create the 6 products using the table above, and copy each product ID.
 4. Paste the IDs into `src/shared/Config/Products.luau`, replacing `id = 0`. Commit and push, then rebuild or resync.
 5. Test in Studio. Test purchases there don't charge Robux: buy each product and pass, and confirm the grant plus the "✓ Owned" state. Studio purchase prompts are simulated.
 6. **Badges (free):** Creator Dashboard → Badges. Create the 6 milestone badges listed in `src/shared/Config/Badges.luau` and paste their IDs.
