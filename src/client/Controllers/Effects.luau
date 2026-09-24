@@ -263,7 +263,7 @@ function Effects:Init()
 		local event = EventLogic.active(Workspace:GetServerTimeNow())
 		if event then
 			local days = math.ceil(EventLogic.secondsLeft(event, Workspace:GetServerTimeNow()) / 86400)
-			Notifications.show("reward", string.format("%s %s is live! Spooky critters for %d more day%s", event.emoji, event.name, days, if days == 1 then "" else "s"), 6)
+			Notifications.show("reward", string.format("%s %s is live! %s for %d more day%s", event.emoji, event.name, event.tagline, days, if days == 1 then "" else "s"), 6)
 		end
 	end)
 	ClientState.Notify:Connect(function(kind: string, text: string)

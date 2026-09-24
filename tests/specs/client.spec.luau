@@ -321,6 +321,17 @@ return function(t)
 			expect(visuals:FindFirstChild("Zone1")).toBeNil()
 			expect(visuals:FindFirstChild("Zone3")).toBeTruthy()
 
+			-- snowy Frosty Peaks turns on local snowfall; leaving it turns it off
+			root.CFrame = CFrame.new(ZoneLayout.center(5), 3, 30)
+			WorldView._zoneStep()
+			local weather = WorldView._weatherPart()
+			expect(weather).toBeTruthy()
+			expect(weather:FindFirstChild("Snow").Enabled).toBe(true)
+			expect(weather.CanCollide).toBe(false)
+			root.CFrame = CFrame.new(ZoneLayout.center(3), 3, 30)
+			WorldView._zoneStep()
+			expect(weather:FindFirstChild("Snow").Enabled).toBe(false)
+
 			-- radar mode after the tutorial, near-clean zone
 			state.tutorialStep = 5
 			ClientState.Changed:Fire(state)

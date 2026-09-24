@@ -71,5 +71,5 @@ Approach small Roblox YouTubers (1k-50k subscribers) who cover simulators. Offer
 
 ## Event calendar
 - **October 2026: "Haunted Hollow"** Halloween reskin of Backyard Lane (purple fog, jack-o-lantern debris), plus 3 spooky critters. This is the first update after launch.
-- **December 2026: "Snow Day"**, a snow wave across all zones.
+- **December 2026: "Snow Day"** (✅ built, runs automatically 12 Dec to 6 Jan). Backyard Lane gets a snowy palette and snowfall, snowmen ring the hub, and there are 3 winter critters: Cocoa Cub, Gingerbread Pup and Aurora Reindeer (Legendary).
 - Update badges and titles ("[🎃 HALLOWEEN]") help click-through on the charts.

@@ -283,6 +283,45 @@ return function(t)
 	describe("Seasonal events", function()
 		local event = Events[1]
 
+		it("every event is well-formed and events never overlap", function()
+			local ids = {}
+			for i, e in Events do
+				expect(ids[e.id]).toBeNil()
+				ids[e.id] = true
+				expect(e.finish > e.start).toBe(true)
+				expect(e.critterShare > 0 and e.critterShare < 0.5).toBe(true)
+				expect(#e.debris).toBeGreaterThan(0)
+				expect(#e.tagline).toBeGreaterThan(0)
+				expect(#EventLogic.critters(e.id)).toBe(3)
+				for j, other in Events do
+					if i ~= j then
+						expect(e.finish <= other.start or other.finish <= e.start).toBe(true)
+					end
+				end
+				expect(EventLogic.active(e.start + 1)).toBe(e)
+			end
+			-- no event is active before Halloween (e.g. at launch)
+			expect(EventLogic.active(Events[1].start - 86400)).toBeNil()
+		end)
+
+		it("picks weather from the active event, else the zone theme", function()
+			local winter, halloween
+			for _, e in Events do
+				if e.weather == "snow" then
+					winter = e
+				elseif e.id == "halloween2026" then
+					halloween = e
+				end
+			end
+			expect(winter).toBeTruthy()
+			expect(EventLogic.weatherFor(winter.themeZone, winter.start + 60)).toBe("snow")
+			expect(EventLogic.weatherFor(winter.themeZone, winter.start - 60)).toBeNil()
+			expect(EventLogic.weatherFor(1, halloween.start + 60)).toBeNil()
+			expect(EventLogic.weatherFor(5, 0)).toBe("snow") -- Frosty Peaks snows all year
+			expect(EventLogic.weatherFor(3, winter.start + 60)).toBeNil()
+			expect(EventLogic.weatherFor(99, 0)).toBeNil()
+		end)
+
 		it("is active only inside its window", function()
 			expect(EventLogic.active(event.start - 1)).toBeNil()
 			expect(EventLogic.active(event.start)).toBe(event)

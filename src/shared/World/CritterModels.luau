@@ -160,6 +160,21 @@ function CritterModels.build(critterId: string, golden: boolean, parent: Instanc
 		for _, side in { -1, 1 } do
 			Build.wedge(m, V(0.25, 0.7, 0.35), CF(side * 0.5, 3.4, -1.2), rgb(200, 220, 240), { name = "Horn" })
 		end
+	elseif c.extra == "antlers" then
+		-- branched antlers plus a glowing aurora-coloured nose
+		local antler = rgb(235, 215, 170)
+		for _, side in { -1, 1 } do
+			Build.block(m, V(0.18, 1, 0.18), CF(side * 0.45, 3.7, -1.1) * CFrame.Angles(0, 0, math.rad(-side * 20)), antler, { name = "Antler" })
+			Build.block(m, V(0.5, 0.16, 0.16), CF(side * 0.75, 3.95, -1.1), antler, { name = "Antler" })
+			Build.block(m, V(0.16, 0.45, 0.16), CF(side * 0.95, 4.15, -1.1), antler, { name = "Antler" })
+		end
+		local aurora = if golden then GOLD else rgb(120, 255, 210)
+		local nose = Build.ball(m, V(0.4, 0.4, 0.4), CF(0, 2.25, -2.2), aurora, { material = Enum.Material.Neon, name = "Nose" })
+		local light = Instance.new("PointLight")
+		light.Range = 6
+		light.Brightness = 0.7
+		light.Color = aurora
+		light.Parent = nose
 	end
 	if c.extra == "glow" or golden then
 		local core = m:FindFirstChild("Body") :: BasePart?

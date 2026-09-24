@@ -4,6 +4,7 @@
 local Shared = script.Parent.Parent
 local Events = require(Shared.Config.Events)
 local Critters = require(Shared.Config.Critters)
+local Zones = require(Shared.Config.Zones)
 
 local EventLogic = {}
 
@@ -43,6 +44,16 @@ function EventLogic.odds(event: Events.Event): { { critter: Critters.Critter, ch
 		table.insert(result, { critter = critter, chance = event.critterShare * critter.weight / math.max(total, 1) })
 	end
 	return result
+end
+
+-- Weather for a zone right now: an active event's weather in its theme zone, else the zone's own.
+function EventLogic.weatherFor(zoneId: number, now: number): string?
+	local event = EventLogic.active(now)
+	if event and event.themeZone == zoneId and event.weather then
+		return event.weather
+	end
+	local zone = Zones[zoneId]
+	return if zone then zone.theme.weather else nil
 end
 
 return EventLogic

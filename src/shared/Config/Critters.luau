@@ -78,6 +78,10 @@ Critters.List = {
 	{ id = "candybat", name = "Candy Bat", zone = 0, event = "halloween2026", rarity = "Rare", weight = 60, bonus = "coins", value = 0.15, archetype = "bird", body = rgb(110, 60, 160), accent = rgb(255, 140, 40), ears = "tufts" },
 	{ id = "ghostpup", name = "Ghost Pup", zone = 0, event = "halloween2026", rarity = "Epic", weight = 30, bonus = "find", value = 0.15, archetype = "quad", body = rgb(240, 245, 255), accent = rgb(170, 210, 255), ears = "round", tail = "puff", extra = "glow" },
 	{ id = "jackkitten", name = "Jack-o'-Kitten", zone = 0, event = "halloween2026", rarity = "Legendary", weight = 10, bonus = "coins", value = 0.3, archetype = "quad", body = rgb(250, 130, 30), accent = rgb(40, 30, 40), ears = "pointy", tail = "thin", extra = "glow" },
+	-- Seasonal: Snow Day (Winter 2026).
+	{ id = "cocoacub", name = "Cocoa Cub", zone = 0, event = "winter2026", rarity = "Rare", weight = 60, bonus = "capacity", value = 0.2, archetype = "quad", body = rgb(120, 75, 50), accent = rgb(255, 245, 230), ears = "round", tail = "puff" },
+	{ id = "gingerpup", name = "Gingerbread Pup", zone = 0, event = "winter2026", rarity = "Epic", weight = 30, bonus = "coins", value = 0.2, archetype = "quad", body = rgb(200, 120, 60), accent = rgb(255, 255, 255), ears = "pointy", tail = "thin" },
+	{ id = "reindeer", name = "Aurora Reindeer", zone = 0, event = "winter2026", rarity = "Legendary", weight = 10, bonus = "radius", value = 1.5, archetype = "quad", body = rgb(160, 110, 70), accent = rgb(245, 230, 205), ears = "round", tail = "puff", extra = "antlers" },
 } :: { Critter }
 
 Critters.ById = {} :: { [string]: Critter }

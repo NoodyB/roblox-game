@@ -27,7 +27,7 @@ updated: 2026-09-24
 - **Perks (tokens).** Golden Touch (+5% coins per level, 20 levels), Deep Pockets (+10% bag), Quick Feet (+1 speed), Critter Whisperer (+10% luck), and Head Start (keep +1 vacuum and bag tier per level after rebirth).
 - **Daily systems.** Three daily quests (collect, sell, earn, find a critter, help clear, golden debris, play minutes, upgrade) reset at 00:00 UTC and are generated deterministically per player per day. After the first rebirth, finishing all three earns a Rebirth Token. A 7-day login streak escalates rewards, and day 7 adds 15 minutes of 2x Coins.
 - **Leaderboards.** Global boards in the hub: top cleaners by lifetime debris, and top rebirths.
-- **Seasonal events** (`Config/Events.luau`). **Haunted Hollow** runs 2026-10-01 to 11-04 UTC. 20% of critter finds become one of 3 free event critters: Candy Bat, Ghost Pup and Jack-o'-Kitten. Backyard Lane gets a purple and orange palette, jack-o'-lanterns ring the hub, and the Critter Book shows the event odds.
+- **Seasonal events** (`Config/Events.luau`). **Haunted Hollow** runs 2026-10-01 to 11-04 UTC. 20% of critter finds become one of 3 free event critters: Candy Bat, Ghost Pup and Jack-o'-Kitten. Backyard Lane gets a purple and orange palette, jack-o'-lanterns ring the hub, and the Critter Book shows the event odds. **Snow Day** runs 2026-12-12 to 2027-01-06 UTC with the same structure. Its critters are Cocoa Cub, Gingerbread Pup and Aurora Reindeer. Backyard Lane gets a snow, ice and gift-wrap palette, local snowfall and snowmen around the hub. Frosty Peaks has snowfall all year (`theme.weather`).
 - **Promo codes** (`Config/Codes.luau`). Each code is redeemable once per player in Settings, for coins, boosts or a critter. They power creator videos and social posts (`SWEEPSQUAD`, `LAUNCH`, `SQUIRREL`).
 - **Social:** an "👋 Invite" button (Roblox invite prompt), a live "👥 Squad +X%" chip when teammates are close, and `[VIP]` / `[♻️N]` chat tags.
 
@@ -89,7 +89,7 @@ The server simulates everything at 5 Hz. Debris lives as a byte buffer per zone.
 | 60 FPS on mid-range phones | ⏳ Needs device testing |
 
 ## 13. Expansion roadmap
-1. **Seasonal events:** the framework and Halloween "Haunted Hollow" are ✅ implemented. Next is Winter "Snow Day" (add an entry to `Config/Events.luau` plus 3 critters).
+1. **Seasonal events:** the framework, Halloween "Haunted Hollow" and Winter "Snow Day" are ✅ implemented. A new event needs an entry in `Config/Events.luau` (dates, palette, tagline, hub prop, optional weather) plus 3 critters with `zone = 0`. The tests check that events never overlap. Next candidates: Spring (Mar–Apr 2027) and a Summer Beach Week.
 2. **Trading of critters** between players, with anti-scam confirmation.
 3. **Vacuum cosmetics** (skins and trails), sold directly and never randomized.
 4. **New zones** (Underwater Reef, Cloud Kingdom), added through config plus a prop set.

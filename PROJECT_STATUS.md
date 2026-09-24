@@ -21,9 +21,9 @@ Co-op cleaning incremental with 8 themed zones, collectible critters, zone-clear
 - Monetization: 4 passes and 6 products. Idempotent receipts, save-before-grant. IDs still need configuring.
 - Client: HUD, 7 windows, responsive scaling for phone to PC, effects, sounds, loading screen, PC hotkeys.
 - Analytics: onboarding funnel, economy, progression and custom events.
-- Seasonal events: Haunted Hollow for Halloween 2026 (event critters, palette, hub decor). Promo codes. Invite button, squad chip, VIP chat tags.
+- Seasonal events: Haunted Hollow (Halloween 2026) and Snow Day (Winter 2026), each with event critters, palette, hub decor and a toast; Snow Day adds local snowfall (Frosty Peaks snows all year). Promo codes. Invite button, squad chip, VIP chat tags.
 - Badges (6 milestones) and a Roblox group bonus (+10%); auto Low Graphics on slow devices; a prebuilt `release/SweepSquad.rbxl`.
-- Tooling: 120 tests, lint, format, place build and validator, economy simulator, geometry preview renderer and UI layout previews for phone, tablet and PC (`tools/preview`, `docs/previews/`), promo art including real-render thumbnails.
+- Tooling: 122 tests, lint, format, place build and validator, economy simulator, geometry preview renderer and UI layout previews for phone, tablet and PC (`tools/preview`, `docs/previews/`), promo art including real-render thumbnails.
 
 ## Remaining work
 | Item | Owner | Notes |
@@ -36,13 +36,13 @@ Co-op cleaning incremental with 8 themed zones, collectible critters, zone-clear
 | Real screenshots for thumbnails | **You** | Concepts are in `marketing/` |
 | Publish publicly | **You (approval)** | After a private test |
 | Halloween event | ✅ Done | Runs automatically 2026-10-01 to 11-04 UTC |
-| Winter event "Snow Day" | Claude | Add to `Config/Events.luau` plus 3 critters |
+| Winter event "Snow Day" | ✅ Done | Runs automatically 2026-12-12 to 2027-01-06 UTC (snowfall, 3 critters, snowmen) |
 
 ## Known issues
 See [Known Issues](docs/Games/Sweep%20Squad/Known%20Issues.md). There are no known failing tests. The main risks are in-engine visual offsets (gear, followers) and real-device performance.
 
 ## Last successful test results (2026-09-24)
-- `./tools/check.sh` passes all steps: stylua ✅, selene 0/0 ✅, **120 passed / 0 failed** ✅, rojo build ✅, place validation ✅.
+- `./tools/check.sh` passes all steps: stylua ✅, selene 0/0 ✅, **122 passed / 0 failed** ✅, rojo build ✅, place validation ✅.
 
 ## Development environment
 - Cloud: Ubuntu 24.04. Toolchain built from crates.io (GitHub downloads are blocked): Rojo 7.7.0, Lune 0.10.5, Selene 0.31.0, StyLua 2.5.2.
@@ -59,4 +59,4 @@ lune run tools/simulate_economy.luau    # balance check
 
 ## Next implementation task
 1. Apply fixes from the owner's Studio playtest, starting with any Output errors.
-2. Winter "Snow Day" event, then a new zone ("Underwater Reef") based on the retention data.
+2. A new zone ("Underwater Reef") or the Spring event, chosen from the retention data after launch.

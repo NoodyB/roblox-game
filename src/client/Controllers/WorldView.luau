@@ -4,6 +4,7 @@
 --    enforces zone access), and only the next gate shows its unlock prompt
 --  * zone ambience: atmosphere/color tint per zone + a title card when entering a zone
 --  * gear: the bag on every character grows as it fills; vacuum sparkles while collecting
+--  * weather: local snowfall above the player in snowy zones (Frosty Peaks, Snow Day event)
 
 local CollectionService = game:GetService("CollectionService")
 local Lighting = game:GetService("Lighting")
@@ -32,6 +33,7 @@ local maxZone = 1
 local currentZone: number? = -99
 local gui: ScreenGui
 local titleCard: Frame?
+local lowGraphics = false
 
 ---------------------------------------------------------------------------------------------------
 -- Gates
@@ -223,6 +225,7 @@ function WorldView:Init()
 		end
 	end)
 	ClientState.Changed:Connect(function(state)
+		lowGraphics = state.settings ~= nil and state.settings.lowGraphics == true
 		if state.maxZone ~= maxZone then
 			maxZone = state.maxZone
 			styleAllGates()
@@ -240,6 +243,61 @@ function WorldView:Init()
 	end)
 end
 
+---------------------------------------------------------------------------------------------------
+-- Weather: one local emitter part that follows the player (never replicated, never collides)
+---------------------------------------------------------------------------------------------------
+
+local weatherPart: Part? = nil
+
+local function snowEmitter(): ParticleEmitter
+	local part = weatherPart
+	if not part then
+		local newPart = Instance.new("Part")
+		newPart.Name = "Weather"
+		newPart.Anchored = true
+		newPart.CanCollide = false
+		newPart.CanQuery = false
+		newPart.CanTouch = false
+		newPart.CastShadow = false
+		newPart.Transparency = 1
+		newPart.Size = Vector3.new(90, 1, 90)
+		local snow = Instance.new("ParticleEmitter")
+		snow.Name = "Snow"
+		snow.EmissionDirection = Enum.NormalId.Bottom
+		snow.Speed = NumberRange.new(5, 8)
+		snow.Lifetime = NumberRange.new(5, 7)
+		snow.SpreadAngle = Vector2.new(15, 15)
+		snow.RotSpeed = NumberRange.new(-40, 40)
+		snow.Size = NumberSequence.new(0.35, 0.25)
+		snow.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
+		snow.Transparency = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, 1),
+			NumberSequenceKeypoint.new(0.1, 0.15),
+			NumberSequenceKeypoint.new(0.85, 0.15),
+			NumberSequenceKeypoint.new(1, 1),
+		})
+		snow.Enabled = false
+		snow.Parent = newPart
+		newPart.Parent = Workspace.CurrentCamera or Workspace
+		weatherPart = newPart
+		part = newPart
+	end
+	return (part :: Part):FindFirstChild("Snow") :: ParticleEmitter
+end
+
+local function updateWeather(zoneId: number?, rootPosition: Vector3)
+	local weather = if zoneId and zoneId >= 1 then EventLogic.weatherFor(zoneId, Workspace:GetServerTimeNow()) else nil
+	if weather == "snow" then
+		local snow = snowEmitter()
+		snow.Rate = if lowGraphics then 25 else 60
+		snow.Enabled = true
+		local part = weatherPart :: Part
+		part.CFrame = CFrame.new(rootPosition + Vector3.new(0, 28, 0))
+	elseif weatherPart then
+		(weatherPart:FindFirstChild("Snow") :: ParticleEmitter).Enabled = false
+	end
+end
+
 local function zoneStep()
 	local character = player.Character
 	local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
@@ -250,9 +308,13 @@ local function zoneStep()
 			applyAmbience(zoneId)
 			showTitle(zoneId)
 		end
+		updateWeather(currentZone, root.Position)
 	end
 end
 WorldView._zoneStep = zoneStep
+WorldView._weatherPart = function(): Part?
+	return weatherPart
+end
 
 function WorldView:Start()
 	styleAllGates()

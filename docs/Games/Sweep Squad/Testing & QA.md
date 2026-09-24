@@ -11,7 +11,7 @@ Run on 2026-09-24 in the cloud environment (Linux) with Rojo 7.7.0, Lune 0.10.5,
 |---|---|---|
 | Formatting | `stylua --check src tests tools` | ✅ clean |
 | Lint | `selene src` (custom `roblox_min` std) | ✅ 0 errors, 0 warnings |
-| Unit + integration tests | `lune run tests/run` | ✅ **117 passed, 0 failed** |
+| Unit + integration tests | `lune run tests/run` | ✅ **122 passed, 0 failed** |
 | Place build | `rojo build … -o build/SweepSquad.rbxl` | ✅ builds |
 | Place validation | `lune run tools/validate_place.luau` | ✅ 1 server script, 2 client scripts, 60+ modules, all compile |
 
@@ -33,7 +33,7 @@ Run on 2026-09-24 in the cloud environment (Linux) with Rojo 7.7.0, Lune 0.10.5,
 | `zone1_squad`, `thumb_squad` | Debris was a grid of flat discs → redesigned into an overlapping, varied carpet with visible cleaned trails |
 | `overview` | Coherent layout (hub → corridors → gated zones). Every zone sat on the same green meadow → themed biome ground per zone |
 | `beach_golden` | The golden wave reads clearly. The umbrella canopy looked like a pinwheel → rebuilt as a striped dome |
-| `critters` | All 27 critters are readable and cute. The hedgehog's spikes looked like fence planks → rebuilt as quills |
+| `critters` | All 30 critters (24 zone and 6 event) are readable and cute. The hedgehog's spikes looked like fence planks → rebuilt as quills. The Aurora Reindeer's aurora-green belly looked wrong → cream body accent, and only the nose glows |
 | `hub`, `candy`, `volcano` | Shops, fountain, seasonal jack-o'-lanterns and themed props render as intended |
 
 This is **not** the Roblox renderer: lighting, materials and text differ. It checks shapes, placement, proportions and colours only.

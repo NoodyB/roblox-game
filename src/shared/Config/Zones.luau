@@ -15,6 +15,7 @@ export type ZoneTheme = {
 	decay: Color3,
 	props: string,
 	debrisShape: string,
+	weather: string?, -- "snow": local snowfall while the player is in the zone
 }
 
 export type Zone = {
@@ -144,6 +145,7 @@ local Zones: { Zone } = {
 			decay = rgb(170, 200, 240),
 			props = "snow",
 			debrisShape = "snow",
+			weather = "snow",
 		},
 	},
 	{

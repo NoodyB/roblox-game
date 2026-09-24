@@ -5,6 +5,7 @@
 -- Output: tools/preview/scenes/<name>.json
 
 local fs = require("@lune/fs")
+local process = require("@lune/process")
 local serde = require("@lune/serde")
 local roblox = require("@lune/roblox")
 local task = require("@lune/task")
@@ -145,9 +146,9 @@ for _, critter in Critters.List do
 	table.insert(list, critter)
 end
 for i, critter in list do
-	local col = (i - 1) % 9
-	local row = (i - 1) // 9
-	local base = CF(paradeOrigin.X - 32 + col * 8, 0, paradeOrigin.Z - 10 + row * 9) * roblox.CFrame.Angles(0, math.rad((col - 4) * -6), 0)
+	local col = (i - 1) % 10
+	local row = (i - 1) // 10
+	local base = CF(paradeOrigin.X - 36 + col * 8, 0, paradeOrigin.Z - 10 + row * 9) * roblox.CFrame.Angles(0, math.rad((col - 4.5) * -6), 0)
 	CritterModels.build(critter.id, i % 7 == 0, parade, base, 1.2)
 end
 
@@ -273,10 +274,22 @@ local scenes = {
 	{
 		name = "critters",
 		roots = { parade },
-		camera = { pos = { 0, 22, 560 }, target = { 0, 1.5, 603 }, fov = 50 },
+		camera = { pos = { 0, 30, 538 }, target = { 0, 1.5, 603 }, fov = 50 },
 		sky = { 0.98, 0.9, 0.78 },
 	},
 }
+
+if process.env.PREVIEW_CLOSEUP then
+	table.insert(scenes, {
+		name = "_closeup",
+		roots = { parade },
+		filter = function(x, _y, z)
+			return x > 14 and z > 604
+		end,
+		camera = { pos = { 28, 7, 590 }, target = { 28, 2.2, 608 }, fov = 50 },
+		sky = { 0.98, 0.9, 0.78 },
+	})
+end
 
 fs.writeDir("tools/preview/scenes")
 for _, scene in scenes do
