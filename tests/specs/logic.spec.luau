@@ -373,6 +373,27 @@ return function(t)
 		end)
 	end)
 
+	describe("Product catalogue", function()
+		it("uses whole, unique ids and indexes every configured one", function()
+			local seen = {}
+			local function check(entry, byId)
+				expect(entry.id >= 0 and entry.id == math.floor(entry.id)).toBe(true)
+				if entry.id ~= 0 then
+					expect(seen[entry.id]).toBeNil()
+					seen[entry.id] = true
+					expect(byId[entry.id]).toBe(entry)
+				end
+				expect(entry.priceHint > 0).toBe(true)
+			end
+			for _, pass in Products.GamePasses do
+				check(pass, Products.PassById)
+			end
+			for _, product in Products.DevProducts do
+				check(product, Products.ProductById)
+			end
+		end)
+	end)
+
 	describe("Codes", function()
 		it("redeems each code once, case-insensitively", function()
 			local p = DataSchema.new(0)

@@ -9,7 +9,7 @@ updated: 2026-09-24
 ## Portfolio
 | Game | Status | Phase | Next action |
 |---|---|---|---|
-| 🍂 [[Game Design Document\|Sweep Squad]] | Implemented; tested offline (122 tests) | M7 QA → Studio playtest | Owner: run the [[Studio Setup & Playtest Guide]] |
+| 🍂 [[Game Design Document\|Sweep Squad]] | Implemented; tested offline (123 tests) | M7 QA → Studio playtest | Owner: run the [[Studio Setup & Playtest Guide]] |
 
 ## Milestones (Sweep Squad)
 | # | Milestone | Status |

@@ -14,6 +14,7 @@ return function(t)
 
 	local GameConfig = R(Shared .. "Config.GameConfig")
 	local Zones = R(Shared .. "Config.Zones")
+	local Products = R(Shared .. "Config.Products")
 	local DataSchema = R(Shared .. "Logic.DataSchema")
 	local Stats = R(Shared .. "Logic.Stats")
 	local DebrisGrid = R(Shared .. "Logic.DebrisGrid")
@@ -154,7 +155,7 @@ return function(t)
 			expect(sawBuy).toBe(true)
 		end)
 
-		it("prompts real purchases only for configured products", function()
+		it("prompts each configured pass and product with its own id, never an owned pass", function()
 			env.marketplace.prompts = {}
 			WindowManager.open("Store")
 			for _, d in guis.windows:GetDescendants() do
@@ -163,7 +164,29 @@ return function(t)
 				end
 			end
 			WindowManager.close()
-			expect(#env.marketplace.prompts).toBe(0) -- all ids are 0 until configured
+			local prompted = {}
+			for _, prompt in env.marketplace.prompts do
+				expect(prompted[prompt.id]).toBeNil() -- one prompt per button
+				prompted[prompt.id] = prompt.kind
+			end
+			local expected = 0
+			for _, pass in Products.GamePasses do
+				if pass.id == 0 or state.passes[pass.key] then
+					expect(prompted[pass.id]).toBeNil() -- unconfigured or already owned (VIP here)
+				else
+					expect(prompted[pass.id]).toBe("pass")
+					expected += 1
+				end
+			end
+			for _, product in Products.DevProducts do
+				if product.id == 0 then
+					expect(prompted[product.id]).toBeNil()
+				else
+					expect(prompted[product.id]).toBe("product")
+					expected += 1
+				end
+			end
+			expect(#env.marketplace.prompts).toBe(expected)
 		end)
 	end)
 

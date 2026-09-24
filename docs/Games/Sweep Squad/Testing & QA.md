@@ -11,7 +11,7 @@ Run on 2026-09-24 in the cloud environment (Linux) with Rojo 7.7.0, Lune 0.10.5,
 |---|---|---|
 | Formatting | `stylua --check src tests tools` | ✅ clean |
 | Lint | `selene src` (custom `roblox_min` std) | ✅ 0 errors, 0 warnings |
-| Unit + integration tests | `lune run tests/run` | ✅ **122 passed, 0 failed** |
+| Unit + integration tests | `lune run tests/run` | ✅ **123 passed, 0 failed** |
 | Place build | `rojo build … -o build/SweepSquad.rbxl` | ✅ builds |
 | Place validation | `lune run tools/validate_place.luau` | ✅ 1 server script, 2 client scripts, 60+ modules, all compile |
 

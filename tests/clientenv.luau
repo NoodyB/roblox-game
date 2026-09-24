@@ -294,10 +294,10 @@ function ClientEnv.install(Harness)
 			return { PriceInRobux = 99, ProductId = id }
 		end,
 		PromptProductPurchase = function(self, _, id)
-			table.insert(self.prompts, id)
+			table.insert(self.prompts, { kind = "product", id = id })
 		end,
 		PromptGamePassPurchase = function(self, _, id)
-			table.insert(self.prompts, id)
+			table.insert(self.prompts, { kind = "pass", id = id })
 		end,
 	}
 	Harness.setService("MarketplaceService", env.marketplace)

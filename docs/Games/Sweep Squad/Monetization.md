@@ -29,6 +29,8 @@ Icons are 512×512 PNGs, drawn so everything stays inside the circle Roblox uses
 
 Prices are hints for the store UI; the real price is fetched from Roblox. Review them after launch against conversion data (see *Price testing* below). Roblox's Price Optimization tool can A/B test prices later.
 
+**Status (2026-09-24):** the owner created all 4 passes and 6 products, and their IDs are set in `Config/Products.luau`. Buy buttons now open real purchase prompts. Next step: buy each item in a Studio test (Studio purchases are simulated) and confirm the grant.
+
 ## Setup checklist (you: needs your Roblox account)
 1. Publish the place: Studio → File → Publish to Roblox.
 2. Go to Creator Dashboard → your experience → **Monetization → Passes**. Create the 4 passes using the names, prices and icons in the table above. Copy each pass ID.
