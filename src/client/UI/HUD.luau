@@ -3,12 +3,14 @@
 -- buttons (left side, reachable by thumb on phones; hotkeys on PC).
 
 local Players = game:GetService("Players")
+local SocialService = game:GetService("SocialService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
 local Shared = ReplicatedStorage.Shared
 local Theme = require(Shared.Config.Theme)
+local GameConfig = require(Shared.Config.GameConfig)
 local Zones = require(Shared.Config.Zones)
 local ZoneLayout = require(Shared.Logic.ZoneLayout)
 local Economy = require(Shared.Logic.Economy)
@@ -30,6 +32,8 @@ local zoneBar: C.ProgressBar
 local goldenBadge: TextLabel
 local stormBanner: Frame
 local stormLabel: TextLabel
+local squadChip: Frame
+local squadLabel: TextLabel
 local boostsRow: Frame
 local badges: { [string]: TextLabel } = {}
 local menuButtons: { [string]: C.Button } = {}
@@ -111,6 +115,46 @@ function HUD.mount(gui: ScreenGui)
 	})
 	C.round().Parent = goldenBadge
 	C.stroke(Colors.Stroke, 2).Parent = goldenBadge
+
+	-- Squad bonus chip (left of the zone bar) + invite button
+	squadChip = C.card({
+		Name = "Squad",
+		Size = UDim2.fromOffset(170, 32),
+		Position = UDim2.new(0.5, -218, 0, 76),
+		AnchorPoint = Vector2.new(1, 0),
+		BackgroundColor3 = Colors.Green,
+		CornerRadius = 16,
+		Visible = false,
+		Parent = gui,
+	})
+	squadLabel = C.outlined({
+		Size = UDim2.new(1, -12, 1, -6),
+		Position = UDim2.fromScale(0.5, 0.5),
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Parent = squadChip,
+	})
+	C.button({
+		Name = "Invite",
+		Text = "👋 Invite",
+		Size = UDim2.fromOffset(120, 50),
+		Position = UDim2.new(0.5, 270, 0, 10),
+		AnchorPoint = Vector2.new(0, 0),
+		Color = Colors.Blue,
+		DarkColor = Colors.BlueDark,
+		Parent = gui,
+		OnClick = function()
+			task.spawn(function()
+				local ok, canInvite = pcall(function()
+					return SocialService:CanSendGameInviteAsync(player)
+				end)
+				if ok and canInvite then
+					pcall(function()
+						SocialService:PromptGameInvite(player)
+					end)
+				end
+			end)
+		end,
+	})
 
 	-- Storm banner
 	stormBanner = C.card({
@@ -315,6 +359,28 @@ function HUD.tick()
 		goldenBadge.Visible = false
 	else
 		zoneBar.root.Visible = false
+	end
+
+	-- squad bonus preview (the server computes the real bonus the same way)
+	local squad = 0
+	if root and zoneId and zoneId >= 1 then
+		local r2 = GameConfig.SquadRadius * GameConfig.SquadRadius
+		for _, other in Players:GetPlayers() do
+			if other ~= player then
+				local otherRoot = other.Character and other.Character:FindFirstChild("HumanoidRootPart") :: BasePart?
+				if otherRoot then
+					local d = otherRoot.Position - root.Position
+					if d.X * d.X + d.Z * d.Z <= r2 and ZoneLayout.zoneAt(otherRoot.Position.X, otherRoot.Position.Z) == zoneId then
+						squad += 1
+					end
+				end
+			end
+		end
+	end
+	local bonus = math.min(GameConfig.SquadBonusMax, squad * GameConfig.SquadBonusPerPlayer)
+	squadChip.Visible = bonus > 0
+	if bonus > 0 then
+		squadLabel.Text = string.format("👥 Squad +%d%%", math.floor(bonus * 100 + 0.5))
 	end
 
 	local stormEnds = (Workspace:GetAttribute("StormEndsAt") :: number?) or 0

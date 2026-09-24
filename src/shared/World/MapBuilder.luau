@@ -409,7 +409,8 @@ local function buildHub(parent: Instance, refs: MapRefs)
 	arch(folder, half, "🍂 To the Yards! →", rgb(255, 138, 61))
 end
 
-function MapBuilder.build(parent: Instance): MapRefs
+-- options.hubDecor: prop kind to scatter around the hub for a seasonal event (e.g. "jackOLantern")
+function MapBuilder.build(parent: Instance, options: { hubDecor: string? }?): MapRefs
 	local map = Build.folder("Map", nil)
 	local refs: MapRefs = {
 		map = map,
@@ -433,6 +434,13 @@ function MapBuilder.build(parent: Instance): MapRefs
 	end
 
 	buildHub(map, refs)
+	if options and options.hubDecor then
+		local seasonal = Build.folder("Seasonal", map)
+		for i = 0, 11 do
+			local angle = math.rad(i * 30 + 15)
+			Props.build(options.hubDecor, seasonal, groundCF(math.cos(angle) * 30, math.sin(angle) * 30) * CFrame.Angles(0, -angle - math.rad(90), 0), 0.8)
+		end
+	end
 	local zonesFolder = Build.folder("Zones", map)
 	for zoneId = 1, #Zones do
 		buildZone(zonesFolder, zoneId, refs)

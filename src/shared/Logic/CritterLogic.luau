@@ -29,12 +29,15 @@ function CritterLogic.findChance(findMultiplier: number): number
 end
 
 -- random: () -> [0, 1). Returns a species id or nil.
+-- `eventCritters`/`eventShare`: during a seasonal event, that share of finds come from its critters.
 function CritterLogic.roll(
 	random: () -> number,
 	zoneId: number,
 	findMultiplier: number,
 	ticksSinceLast: number,
-	neverFound: boolean
+	neverFound: boolean,
+	eventCritters: { Critters.Critter }?,
+	eventShare: number?
 ): string?
 	local guaranteed = ticksSinceLast >= GameConfig.CritterPityTicks
 		or (neverFound and ticksSinceLast >= GameConfig.FirstCritterGuaranteeTicks)
@@ -42,6 +45,9 @@ function CritterLogic.roll(
 		return nil
 	end
 	local list = Critters.ByZone[zoneId]
+	if eventCritters and #eventCritters > 0 and not neverFound and random() < (eventShare or 0) then
+		list = eventCritters
+	end
 	if not list or #list == 0 then
 		return nil
 	end

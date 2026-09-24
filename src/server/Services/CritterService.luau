@@ -6,6 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage.Shared
 local Critters = require(Shared.Config.Critters)
 local CritterLogic = require(Shared.Logic.CritterLogic)
+local EventLogic = require(Shared.Logic.EventLogic)
 
 local Net = require(script.Parent.Net)
 local DataService = require(script.Parent.DataService)
@@ -50,12 +51,15 @@ function CritterService.onCollectTick(player: Player, zoneId: number)
 		return
 	end
 	profile.stats.ticksSinceCritter += 1
+	local event = EventLogic.active(os.time())
 	local found = CritterLogic.roll(
 		roll,
 		zoneId,
 		stats.findMultiplier,
 		profile.stats.ticksSinceCritter,
-		profile.stats.crittersFound == 0
+		profile.stats.crittersFound == 0,
+		if event then EventLogic.critters(event.id) else nil,
+		if event then event.critterShare else nil
 	)
 	if found then
 		CritterService.grant(player, found)

@@ -300,6 +300,12 @@ function ClientEnv.install(Harness)
 	Harness.setService("MarketplaceService", env.marketplace)
 	Harness.setService("ProximityPromptService", { PromptTriggered = Mocks.signal() })
 	env.textChat = { OnIncomingMessage = nil }
+	Harness.setService("SocialService", {
+		CanSendGameInviteAsync = function()
+			return true
+		end,
+		PromptGameInvite = function() end,
+	})
 	Harness.setService("TextChatService", env.textChat)
 	Harness.setService("StarterGui", {
 		SetCoreGuiEnabled = function() end,

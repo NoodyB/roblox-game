@@ -7,6 +7,7 @@
 
 local CollectionService = game:GetService("CollectionService")
 local Lighting = game:GetService("Lighting")
+local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
@@ -15,6 +16,7 @@ local Shared = ReplicatedStorage.Shared
 local Theme = require(Shared.Config.Theme)
 local Zones = require(Shared.Config.Zones)
 local ZoneLayout = require(Shared.Logic.ZoneLayout)
+local EventLogic = require(Shared.Logic.EventLogic)
 local Format = require(Shared.Util.Format)
 local GearModels = require(Shared.World.GearModels)
 
@@ -85,7 +87,12 @@ local function applyAmbience(zoneId: number?)
 	local info = TweenInfo.new(1.5, Enum.EasingStyle.Sine)
 	if zoneId and zoneId >= 1 then
 		local theme = Zones[zoneId].theme
-		TweenService:Create(atmosphere, info, { Color = theme.atmosphere, Decay = theme.decay, Density = 0.3 }):Play()
+		local event = EventLogic.active(Workspace:GetServerTimeNow())
+		local color, decay = theme.atmosphere, theme.decay
+		if event and event.themeZone == zoneId then
+			color, decay = event.atmosphere, event.decay
+		end
+		TweenService:Create(atmosphere, info, { Color = color, Decay = decay, Density = 0.3 }):Play()
 		if correction then
 			local golden = DebrisRenderer.isGolden(zoneId)
 			TweenService:Create(correction, info, {

@@ -22,6 +22,8 @@ return function(t)
 	local CritterLogic = R("Logic.CritterLogic")
 	local QuestLogic = R("Logic.QuestLogic")
 	local Format = R("Util.Format")
+	local EventLogic = R("Logic.EventLogic")
+	local Events = R("Config.Events")
 	local Rng = R("Util.Rng")
 	local RateLimiter = R("Util.RateLimiter")
 	local Signal = R("Util.Signal")
@@ -269,6 +271,60 @@ return function(t)
 		it("rounds sale values", function()
 			expect(Economy.sellValue(10, 1.26)).toBe(13)
 			expect(Economy.sellValue(0, 5)).toBe(0)
+		end)
+	end)
+
+	describe("Seasonal events", function()
+		local event = Events[1]
+
+		it("is active only inside its window", function()
+			expect(EventLogic.active(event.start - 1)).toBeNil()
+			expect(EventLogic.active(event.start)).toBe(event)
+			expect(EventLogic.active(event.finish - 1)).toBe(event)
+			expect(EventLogic.active(event.finish)).toBeNil()
+			expect(EventLogic.secondsLeft(event, event.finish - 60)).toBe(60)
+		end)
+
+		it("has 3 event critters kept out of normal zone drops", function()
+			local list = EventLogic.critters(event.id)
+			expect(#list).toBe(3)
+			for _, critter in list do
+				expect(critter.zone).toBe(0)
+			end
+			local sum = 0
+			for _, entry in EventLogic.odds(event) do
+				sum += entry.chance
+			end
+			expect(sum).toBeCloseTo(event.critterShare)
+		end)
+
+		it("rolls event critters at the configured share", function()
+			local rng = Rng.new(9)
+			local list = EventLogic.critters(event.id)
+			local isEvent = {}
+			for _, c in list do
+				isEvent[c.id] = true
+			end
+			local eventFinds, total = 0, 0
+			for _ = 1, 20000 do
+				local id = CritterLogic.roll(function()
+					return rng:next()
+				end, 1, 1, GameConfig.CritterPityTicks, false, list, event.critterShare)
+				total += 1
+				if isEvent[id] then
+					eventFinds += 1
+				end
+			end
+			expect(eventFinds / total).toBeGreaterThan(event.critterShare * 0.85)
+			expect(eventFinds / total).toBeLessThan(event.critterShare * 1.15)
+		end)
+
+		it("never gives an event critter as a brand-new player's first find", function()
+			local list = EventLogic.critters(event.id)
+			local id = CritterLogic.roll(function()
+				return 0
+			end, 1, 1, GameConfig.FirstCritterGuaranteeTicks, true, list, 1)
+			expect(id).toBe("squirrel")
 		end)
 	end)
 

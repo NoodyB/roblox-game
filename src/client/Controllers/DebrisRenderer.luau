@@ -20,6 +20,7 @@ local Zones = require(Shared.Config.Zones)
 local DebrisGrid = require(Shared.Logic.DebrisGrid)
 local ZoneLayout = require(Shared.Logic.ZoneLayout)
 local NetCodec = require(Shared.Logic.NetCodec)
+local EventLogic = require(Shared.Logic.EventLogic)
 local Signal = require(Shared.Util.Signal)
 
 local ClientState = require(script.Parent.ClientState)
@@ -47,6 +48,7 @@ local lowGraphics = false
 local ready = false
 local player = Players.LocalPlayer
 
+local activeEvent: any = nil -- seasonal event (recolors its theme zone's debris)
 local flyingPool: { BasePart } = {}
 local flyingActive = 0
 
@@ -104,7 +106,7 @@ local function styleCell(zoneId: number, index: number, parts: CellParts, amount
 	local h1, h2, h3 = hash(index * 3 + zoneId), hash(index * 7 + 11), hash(index * 13 + 5)
 	x += (h1 - 0.5) * 1.8
 	z += (h2 - 0.5) * 1.8
-	local colors = theme.debris
+	local colors = if activeEvent and activeEvent.themeZone == zoneId then activeEvent.debris else theme.debris
 	local color = if golden then theme.golden else colors[(index % #colors) + 1]
 	local main = parts.main
 	main.Size = shape.main * f
@@ -291,6 +293,7 @@ local function onReady(_state, snapshot: { [string]: any })
 		end
 	end
 	ready = true
+	DebrisRenderer.refreshEvent()
 	for _, delta in pendingDeltas do
 		applyDelta(delta)
 	end
@@ -303,6 +306,20 @@ end
 ---------------------------------------------------------------------------------------------------
 -- public
 ---------------------------------------------------------------------------------------------------
+
+-- Re-checks the seasonal event and restyles the affected zone if it changed.
+function DebrisRenderer.refreshEvent()
+	local event = EventLogic.active(Workspace:GetServerTimeNow())
+	if event ~= activeEvent then
+		local previous = activeEvent
+		activeEvent = event
+		for _, e in { previous, event } do
+			if e then
+				restyleZone(e.themeZone)
+			end
+		end
+	end
+end
 
 function DebrisRenderer.cleanFraction(zoneId: number): number
 	local grid = grids[zoneId]
@@ -399,6 +416,9 @@ function DebrisRenderer:Start()
 						destroyZone(zoneId)
 					end
 				end
+			end
+			if os.clock() % 30 < 0.5 then
+				DebrisRenderer.refreshEvent()
 			end
 			task.wait(0.5)
 		end

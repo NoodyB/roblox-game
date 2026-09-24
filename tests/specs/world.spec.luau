@@ -107,6 +107,16 @@ return function(t)
 		end)
 	end)
 
+	describe("Seasonal map decor", function()
+		it("adds hub decorations for an active event", function()
+			local parent = Instance.new("Folder")
+			local refs = MapBuilder.build(parent, { hubDecor = "jackOLantern" })
+			local seasonal = refs.map:FindFirstChild("Seasonal")
+			expect(seasonal).toBeTruthy()
+			expect(#seasonal:GetChildren()).toBe(12)
+		end)
+	end)
+
 	describe("Props", function()
 		it("builds every prop kind used by any theme", function()
 			local kinds = {}
@@ -122,6 +132,7 @@ return function(t)
 				kinds[kind] = true
 			end
 			local parent = Instance.new("Folder")
+			kinds.jackOLantern = true
 			for kind in kinds do
 				local model = Props.build(kind, parent, CFrame.new(10, 0, 10), 1, Zones[1].theme)
 				expect(countParts(model)).toBeGreaterThan(0)

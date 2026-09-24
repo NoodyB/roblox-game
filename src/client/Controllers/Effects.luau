@@ -4,6 +4,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local Workspace = game:GetService("Workspace")
 
 local Shared = ReplicatedStorage.Shared
 local Theme = require(Shared.Config.Theme)
@@ -12,6 +13,7 @@ local Zones = require(Shared.Config.Zones)
 local GameConfig = require(Shared.Config.GameConfig)
 local Format = require(Shared.Util.Format)
 local CritterModels = require(Shared.World.CritterModels)
+local EventLogic = require(Shared.Logic.EventLogic)
 
 local UI = script.Parent.Parent.UI
 local C = require(UI.Components)
@@ -255,6 +257,13 @@ function Effects:Init()
 		local handler = handlers[kind]
 		if handler then
 			handler(payload or {})
+		end
+	end)
+	ClientState.Ready:Connect(function()
+		local event = EventLogic.active(Workspace:GetServerTimeNow())
+		if event then
+			local days = math.ceil(EventLogic.secondsLeft(event, Workspace:GetServerTimeNow()) / 86400)
+			Notifications.show("reward", string.format("%s %s is live! Spooky critters for %d more day%s", event.emoji, event.name, days, if days == 1 then "" else "s"), 6)
 		end
 	end)
 	ClientState.Notify:Connect(function(kind: string, text: string)

@@ -10,6 +10,8 @@ local GameConfig = require(Shared.Config.GameConfig)
 local Critters = require(Shared.Config.Critters)
 local Zones = require(Shared.Config.Zones)
 local CritterLogic = require(Shared.Logic.CritterLogic)
+local EventLogic = require(Shared.Logic.EventLogic)
+local Events = require(Shared.Config.Events)
 local CritterModels = require(Shared.World.CritterModels)
 local C = require(script.Parent.Parent.Components)
 
@@ -254,6 +256,33 @@ return function(request: (string, any?) -> (boolean, any))
 				})
 				C.label({
 					Text = string.format("Find chance: %d%%", math.floor(odds.chance * 100 + 0.5)),
+					Font = Theme.Fonts.Bold,
+					TextColor3 = rarity.color,
+					Size = UDim2.new(1, -12, 0, 18),
+					Position = UDim2.fromOffset(6, 158),
+					Parent = frame,
+				})
+				bookCards[critter.id] = { frame = frame, discovered = false }
+			end
+		end
+		-- seasonal critters (free event drops) with their overall odds during the event
+		for index, event in Events do
+			for _, odds in EventLogic.odds(event) do
+				local critter = odds.critter
+				local rarity = Critters.Rarities[critter.rarity]
+				local frame = C.card({ Name = critter.id, StrokeColor = rarity.color, LayoutOrder = 1000 + index * 10 + rarity.order, Parent = bookGrid })
+				viewport(frame, critter.id, false, true)
+				C.label({ Name = "CritterName", Text = "???", Size = UDim2.new(1, -12, 0, 22), Position = UDim2.fromOffset(6, 110), Parent = frame })
+				C.label({
+					Text = string.format("%s %s event · %s", event.emoji, event.name, bonusText(critter, false)),
+					Font = Theme.Fonts.Bold,
+					TextColor3 = Colors.TextLight,
+					Size = UDim2.new(1, -12, 0, 18),
+					Position = UDim2.fromOffset(6, 134),
+					Parent = frame,
+				})
+				C.label({
+					Text = string.format("%.0f%% of finds during event", odds.chance * 100),
 					Font = Theme.Fonts.Bold,
 					TextColor3 = rarity.color,
 					Size = UDim2.new(1, -12, 0, 18),

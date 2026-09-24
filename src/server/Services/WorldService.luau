@@ -7,6 +7,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage.Shared
 local ZoneLayout = require(Shared.Logic.ZoneLayout)
 local MapBuilder = require(Shared.World.MapBuilder)
+local EventLogic = require(Shared.Logic.EventLogic)
 local Signal = require(Shared.Util.Signal)
 
 local WorldService = {}
@@ -20,7 +21,8 @@ function WorldService:Init()
 	if existing then
 		existing:Destroy()
 	end
-	refs = MapBuilder.build(Workspace)
+	local event = EventLogic.active(os.time())
+	refs = MapBuilder.build(Workspace, { hubDecor = if event then event.hubDecor else nil })
 	local built = refs :: MapBuilder.MapRefs
 	for _, prompt in built.prompts do
 		local zoneId = prompt:GetAttribute("ZoneId")

@@ -78,6 +78,21 @@ builders.pumpkin = function(m, base, s)
 	Build.ball(m, V(1.6, 0.4, 1) * s, base * CF(0.7 * s, 3.4 * s, 0) * CFrame.Angles(0, 0, rad(-20)), rgb(100, 160, 60), { shadow = false })
 end
 
+builders.jackOLantern = function(m, base, s)
+	builders.pumpkin(m, base, s)
+	local glow = rgb(255, 170, 40)
+	for _, x in { -0.7, 0.7 } do
+		Build.wedge(m, V(0.6, 0.6, 0.2) * s, base * CF(x * s, 2.1 * s, -2.1 * s), glow, { material = Enum.Material.Neon, shadow = false })
+	end
+	local mouth = Build.block(m, V(1.6, 0.35, 0.2) * s, base * CF(0, 1.2 * s, -2.15 * s), glow, { material = Enum.Material.Neon, shadow = false })
+	local light = Instance.new("PointLight")
+	light.Range = 12
+	light.Brightness = 1.5
+	light.Color = glow
+	light.Shadows = false
+	light.Parent = mouth
+end
+
 builders.haybale = function(m, base, s)
 	local hay = rgb(230, 196, 100)
 	Build.cylinderX(m, 5 * s, 3.4 * s, base * CF(0, 1.7 * s, 0), hay, { material = Enum.Material.Fabric, collide = true })

@@ -18,6 +18,7 @@ export type Critter = {
 	ears: string?,
 	tail: string?,
 	extra: string?,
+	event: string?, -- seasonal event id (zone = 0): only drops while that event is active
 }
 
 local rgb = Color3.fromRGB
@@ -73,6 +74,10 @@ Critters.List = {
 	{ id = "moonmouse", name = "Moon Mouse", zone = 8, rarity = "Common", weight = 70, bonus = "coins", value = 0.25, archetype = "quad", body = rgb(200, 200, 220), accent = rgb(255, 190, 220), ears = "round", tail = "thin" },
 	{ id = "axolotl", name = "Astro Axolotl", zone = 8, rarity = "Epic", weight = 25, bonus = "speed", value = 3, archetype = "sea", body = rgb(255, 170, 220), accent = rgb(170, 110, 255), extra = "gills" },
 	{ id = "whale", name = "Cosmic Whale", zone = 8, rarity = "Mythic", weight = 5, bonus = "coins", value = 1.5, archetype = "sea", body = rgb(60, 60, 140), accent = rgb(150, 220, 255), extra = "fin" },
+	-- Seasonal: Haunted Hollow (Halloween 2026). zone = 0 keeps them out of normal zone tables.
+	{ id = "candybat", name = "Candy Bat", zone = 0, event = "halloween2026", rarity = "Rare", weight = 60, bonus = "coins", value = 0.15, archetype = "bird", body = rgb(110, 60, 160), accent = rgb(255, 140, 40), ears = "tufts" },
+	{ id = "ghostpup", name = "Ghost Pup", zone = 0, event = "halloween2026", rarity = "Epic", weight = 30, bonus = "find", value = 0.15, archetype = "quad", body = rgb(240, 245, 255), accent = rgb(170, 210, 255), ears = "round", tail = "puff", extra = "glow" },
+	{ id = "jackkitten", name = "Jack-o'-Kitten", zone = 0, event = "halloween2026", rarity = "Legendary", weight = 10, bonus = "coins", value = 0.3, archetype = "quad", body = rgb(250, 130, 30), accent = rgb(40, 30, 40), ears = "pointy", tail = "thin", extra = "glow" },
 } :: { Critter }
 
 Critters.ById = {} :: { [string]: Critter }
