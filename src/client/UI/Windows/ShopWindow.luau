@@ -63,7 +63,7 @@ return function(request: (string, any?) -> (boolean, any))
 		end
 	end
 
-	local function select(track: string)
+	local function selectTab(track: string)
 		current = track
 		for key, list in lists do
 			list.Visible = key == track
@@ -90,7 +90,7 @@ return function(request: (string, any?) -> (boolean, any))
 				LayoutOrder = i,
 				Parent = tabRow,
 				OnClick = function()
-					select(track.key)
+					selectTab(track.key)
 				end,
 			})
 			local list = C.scroll({
@@ -156,7 +156,7 @@ return function(request: (string, any?) -> (boolean, any))
 				table.insert(rows[track.key], { card = card, status = status, buy = buy })
 			end
 		end
-		select(current)
+		selectTab(current)
 		if lastState then
 			refresh(lastState)
 		end

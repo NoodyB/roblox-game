@@ -25,7 +25,7 @@ end
 
 local builders: { [string]: Builder } = {}
 
-builders.autumnTree = function(m, base, s, theme)
+builders.autumnTree = function(m, base, s, _theme)
 	local seed = base.Position.X * 3 + base.Position.Z
 	Build.cylinder(m, 7 * s, 1.6 * s, base * CF(0, 3.5 * s, 0), TRUNK, { material = Enum.Material.Wood })
 	local color = pick(AUTUMN, seed)
@@ -50,7 +50,7 @@ builders.bench = function(m, base, s)
 	end
 end
 
-builders.lamp = function(m, base, s, theme)
+builders.lamp = function(m, base, s, _theme)
 	Build.cylinder(m, 9 * s, 0.5 * s, base * CF(0, 4.5 * s, 0), rgb(50, 50, 58), { material = Enum.Material.Metal, collide = true })
 	local bulb = Build.ball(m, V(1.6, 1.6, 1.6) * s, base * CF(0, 9.4 * s, 0), rgb(255, 230, 170), { material = Enum.Material.Neon, shadow = false })
 	local light = Instance.new("PointLight")
@@ -109,7 +109,7 @@ builders.pine = function(m, base, s, theme)
 	end
 end
 
-builders.snowPine = function(m, base, s, theme)
+builders.snowPine = function(m, base, s, _theme)
 	builders.pine(m, base, s, { props = "snow" })
 end
 
@@ -250,7 +250,7 @@ builders.rocket = function(m, base, s)
 end
 
 -- Large backdrop landmarks placed outside the playable walls.
-builders.house = function(m, base, s, theme)
+builders.house = function(m, base, s, _theme)
 	local wallColors = { rgb(250, 236, 214), rgb(214, 230, 245), rgb(245, 214, 214), rgb(220, 240, 210) }
 	local wall = pick(wallColors, base.Position.X)
 	Build.block(m, V(16, 10, 14) * s, base * CF(0, 5 * s, 0), wall, { material = Enum.Material.SmoothPlastic })

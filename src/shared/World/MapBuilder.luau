@@ -119,7 +119,7 @@ local function corridor(parent: Instance, fromX: number, toX: number, pathColor:
 	end
 end
 
-local function arch(parent: Instance, x: number, zone: any?, label: string, color: Color3)
+local function arch(parent: Instance, x: number, label: string, color: Color3)
 	local folder = Build.folder("Arch", parent)
 	local half = GameConfig.GateWidth / 2 + 1.5
 	for _, z in { -half, half } do
@@ -241,7 +241,7 @@ local function buildZone(parent: Instance, zoneId: number, refs: MapRefs)
 
 	enclose(folder, minX, maxX, minZ, maxZ, true, zoneId < #Zones, theme.border, theme.borderMaterial)
 
-	arch(folder, minX, zone, zone.emoji .. " " .. zone.name, theme.accent)
+	arch(folder, minX, zone.emoji .. " " .. zone.name, theme.accent)
 	if zoneId > 1 then
 		refs.gates[zoneId] = gate(folder, zoneId, refs.prompts)
 	end
@@ -406,7 +406,7 @@ local function buildHub(parent: Instance, refs: MapRefs)
 	for _, p in { V(-40, 0, -115), V(35, 0, -120), V(-35, 0, 118), V(40, 0, 112), V(-110, 0, -40), V(-115, 0, 45) } do
 		Props.build("house", backdrop, CFrame.lookAt(p, V(0, 0, 0)), 1.1)
 	end
-	arch(folder, half, nil, "🍂 To the Yards! →", rgb(255, 138, 61))
+	arch(folder, half, "🍂 To the Yards! →", rgb(255, 138, 61))
 end
 
 function MapBuilder.build(parent: Instance): MapRefs

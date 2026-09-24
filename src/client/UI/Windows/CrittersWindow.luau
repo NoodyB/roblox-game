@@ -9,7 +9,6 @@ local Theme = require(Shared.Config.Theme)
 local GameConfig = require(Shared.Config.GameConfig)
 local Critters = require(Shared.Config.Critters)
 local Zones = require(Shared.Config.Zones)
-local Stats = require(Shared.Logic.Stats)
 local CritterLogic = require(Shared.Logic.CritterLogic)
 local CritterModels = require(Shared.World.CritterModels)
 local C = require(script.Parent.Parent.Components)
@@ -187,7 +186,7 @@ return function(request: (string, any?) -> (boolean, any))
 		refreshBook(state)
 	end
 
-	local function select(tab: string)
+	local function selectTab(tab: string)
 		ownedGrid.Visible = tab == "Mine"
 		bookGrid.Visible = tab == "Book"
 		for key, button in tabs do
@@ -202,10 +201,10 @@ return function(request: (string, any?) -> (boolean, any))
 	local function build(content: Frame)
 		local top = C.new("Frame", { Size = UDim2.new(1, 0, 0, 52), BackgroundTransparency = 1, Parent = content })
 		tabs.Mine = C.button({ Text = "My Critters", Size = UDim2.fromOffset(180, 46), Parent = top, OnClick = function()
-			select("Mine")
+			selectTab("Mine")
 		end })
 		tabs.Book = C.button({ Text = "📖 Critter Book", Size = UDim2.fromOffset(200, 46), Position = UDim2.fromOffset(192, 0), Parent = top, OnClick = function()
-			select("Book")
+			selectTab("Book")
 		end })
 		header = C.label({ Size = UDim2.fromOffset(200, 40), Position = UDim2.new(1, -170, 0, 4), AnchorPoint = Vector2.new(1, 0), TextXAlignment = Enum.TextXAlignment.Right, Parent = top })
 		C.button({
@@ -264,7 +263,7 @@ return function(request: (string, any?) -> (boolean, any))
 				bookCards[critter.id] = { frame = frame, discovered = false }
 			end
 		end
-		select("Mine")
+		selectTab("Mine")
 	end
 
 	return {

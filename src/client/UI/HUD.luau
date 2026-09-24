@@ -37,10 +37,10 @@ local menuButtons: { [string]: C.Button } = {}
 local displayedCoins = 0
 local targetCoins = 0
 local lastBagFull = false
-local cleanFractionFn: (number) -> number = function()
+local cleanFractionFn: (number) -> number = function(_zoneId: number)
 	return 0
 end
-local isGoldenFn: (number) -> boolean = function()
+local isGoldenFn: (number) -> boolean = function(_zoneId: number)
 	return false
 end
 

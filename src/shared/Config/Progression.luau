@@ -4,8 +4,8 @@
 local Progression = {}
 
 Progression.Rebirth = {
-	BaseCost = 250_000,
-	CostGrowth = 3.2,
+	BaseCost = 5_000_000,
+	CostGrowth = 2.6,
 	MultiplierPerRebirth = 0.5, -- additive coin multiplier per rebirth
 	TokensPerRebirth = 1,
 	BonusTokenEvery = 5, -- one extra token on every 5th rebirth
