@@ -73,6 +73,13 @@ end))
 WindowManager.register(require(Windows.StoreWindow)())
 WindowManager.register(require(Windows.SettingsWindow)(request))
 
+WindowManager.Opened:Connect(function()
+	Notifications.dock(true)
+end)
+WindowManager.Closed:Connect(function()
+	Notifications.dock(false)
+end)
+
 ClientState.Changed:Connect(function(state)
 	HUD.refresh(state)
 	WindowManager.refresh(state)

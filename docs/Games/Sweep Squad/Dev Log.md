@@ -17,6 +17,7 @@ tags: [devlog]
 - Docs vault, promo concept art, launch plan, financial model.
 
 - Later in the session: promo codes, VIP and rebirth chat tags, invite button and squad chip, seasonal event framework plus Haunted Hollow (Halloween), NaN-teleport hardening, and loop-body tests. 115 tests pass.
+- UI preview pipeline: the real UI is exported from Lune at 3 device sizes and laid out by an HTML emulation of Roblox GUI rules. It found 4 phone/PC layout problems, all fixed (bigger touch scale, badge placement, keycap hotkeys, docked wrapped toasts). Followers use HipHeight. 120 tests pass.
 
 **Important decisions**
 - Server-authoritative collection from positions, with no client collect remote.

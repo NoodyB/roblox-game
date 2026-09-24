@@ -14,14 +14,18 @@ local scales: { UIScale } = {}
 
 Responsive.isTouch = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 
+-- Touch screens are small and held close, so they use a shorter design height (bigger UI).
+local TOUCH_DESIGN_HEIGHT = 640
+
 function Responsive.compute(): number
 	local camera = Workspace.CurrentCamera
 	local viewport = if camera then camera.ViewportSize else Vector2.new(DESIGN_WIDTH, DESIGN_HEIGHT)
-	local scale = math.min(viewport.Y / DESIGN_HEIGHT, viewport.X / DESIGN_WIDTH * 1.25)
+	local designHeight = if Responsive.isTouch then TOUCH_DESIGN_HEIGHT else DESIGN_HEIGHT
+	local scale = math.min(viewport.Y / designHeight, viewport.X / DESIGN_WIDTH * 1.25)
 	if Responsive.isTouch then
-		scale *= 1.12
+		scale *= 1.1
 	end
-	return math.clamp(scale, 0.55, 1.35)
+	return math.clamp(scale, 0.6, 1.35)
 end
 
 -- Is the screen narrow (e.g. portrait phone)? Layouts can adapt.

@@ -40,9 +40,26 @@ This is **not** the Roblox renderer: lighting, materials and text differ. It che
 
 **Engine rule found during this pass:** Roblox forces `Ball` parts to a uniform size. Non-uniform spheres now use a Block part with a Sphere `SpecialMesh`, and `world.spec` and `client.spec` enforce the Ball and Cylinder size rules.
 
+## UI layout previews (phone, tablet, PC)
+`tools/preview/export_ui.luau` builds the **real** client UI: HUD, toasts, tutorial and all 7 windows. It runs inside the Lune client environment at three device sizes: phone 844×390 touch, tablet 1180×820 touch, and PC 1920×1080 with the Roblox top bar. It exports the GUI trees. `ui.html` / `render_ui.js` then lay them out with an emulation of Roblox GUI rules: UDim2, AnchorPoint, UIListLayout, UIGridLayout, UIPadding, UISizeConstraint, UIScale, AutomaticSize, and TextScaled with word wrap. The 24 images are in `docs/previews/ui/`.
+
+```
+lune run tools/preview/export_ui.luau
+NODE_PATH=$(npm root -g) node tools/preview/render_ui.js
+```
+
+| Finding | Fix |
+|---|---|
+| On phones the UIScale hit its 0.55 floor, which made menu labels and toast text unreadable | Touch devices use a 640px design height. Phones are now 0.67 and the floor is 0.6 (`UI/Responsive.luau`) |
+| Notification badges covered the menu button labels | Badges moved inside the button corner |
+| PC hotkey suffixes truncated labels ("Critters (C") | Hotkeys are now small keycaps in the button corner |
+| Toasts were narrow, unwrapped, and covered the open window's header | Toasts are wider and wrap. While a window is open they dock to the bottom of the screen (`Notifications.dock`) |
+
+This is an emulation, **not** the Roblox renderer. Fonts are close substitutes (Fredoka, Montserrat), and emoji use the browser's font, not Roblox's. It checks layout, overlap and legibility. Final sign-off still needs the Studio device emulator.
+
 ## What has NOT been verified (needs Roblox Studio or devices)
 These are **not** claimed as tested:
-- Actual gameplay in the Roblox engine: physics, character rig and gear welding, camera, ProximityPrompt behaviour, UI layout at real resolutions, tween visuals, sounds.
+- Actual gameplay in the Roblox engine: physics, character rig and gear welding, camera, ProximityPrompt behaviour, UI in the real renderer (layout has only been emulated, see above), tween visuals, sounds.
 - Real DataStore, MarketplaceService and AnalyticsService behaviour (only mocks were tested).
 - Performance: FPS, memory and network on PC and phones.
 - Multiplayer replication timing with several real clients.

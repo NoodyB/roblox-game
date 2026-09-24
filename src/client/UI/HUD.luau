@@ -213,14 +213,31 @@ function HUD.mount(gui: ScreenGui)
 			Parent = button.button,
 		})
 		C.outlined({
-			Text = if Responsive.isTouch then item.label else item.label .. " (" .. item.hotkey .. ")",
+			Text = item.label,
 			Size = UDim2.new(1, -6, 0.3, 0),
 			Position = UDim2.fromScale(0.5, 0.95),
 			AnchorPoint = Vector2.new(0.5, 1),
 			StrokeThickness = 1.5,
 			Parent = button.button,
 		})
-		badges[item.key] = C.badge(button.root)
+		if not Responsive.isTouch then
+			-- small keycap with the PC hotkey in the top-left corner
+			local keycap = C.label({
+				Text = item.hotkey,
+				Font = Theme.Fonts.Bold,
+				TextColor3 = Colors.Text,
+				BackgroundTransparency = 0,
+				BackgroundColor3 = Colors.Background,
+				Size = UDim2.fromOffset(20, 20),
+				Position = UDim2.fromOffset(4, 4),
+				ZIndex = 4,
+				Parent = button.button,
+			})
+			C.corner(6).Parent = keycap
+		end
+		local badge = C.badge(button.root)
+		badge.Position = UDim2.new(1, -8, 0, 8)
+		badges[item.key] = badge
 		menuButtons[item.key] = button
 	end
 	local settings = C.button({

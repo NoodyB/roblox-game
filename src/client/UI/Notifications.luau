@@ -23,12 +23,33 @@ local KIND_COLORS = {
 function Notifications.mount(gui: ScreenGui)
 	container = C.new("Frame", {
 		Name = "Toasts",
-		Size = UDim2.fromOffset(460, 300),
+		Size = UDim2.fromOffset(540, 300),
 		Position = UDim2.new(0.5, 0, 0, 150),
 		AnchorPoint = Vector2.new(0.5, 0),
 		BackgroundTransparency = 1,
 		Parent = gui,
 	}, { C.list(Enum.FillDirection.Vertical, 6) })
+end
+
+-- While a window is open, toasts move to the bottom of the screen so they never cover its header.
+function Notifications.dock(bottom: boolean)
+	if not container then
+		return
+	end
+	local layout = container:FindFirstChildOfClass("UIListLayout")
+	if bottom then
+		container.Position = UDim2.new(0.5, 0, 1, -64)
+		container.AnchorPoint = Vector2.new(0.5, 1)
+		if layout then
+			layout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+		end
+	else
+		container.Position = UDim2.new(0.5, 0, 0, 150)
+		container.AnchorPoint = Vector2.new(0.5, 0)
+		if layout then
+			layout.VerticalAlignment = Enum.VerticalAlignment.Top
+		end
+	end
 end
 
 function Notifications.show(kind: string, text: string, duration: number?)
@@ -54,7 +75,7 @@ function Notifications.show(kind: string, text: string, duration: number?)
 	local colors = KIND_COLORS[kind] or KIND_COLORS.info
 	local toast = C.card({
 		Name = "Toast",
-		Size = UDim2.fromOffset(440, 44),
+		Size = UDim2.fromOffset(520, 54),
 		BackgroundColor3 = colors[1],
 		LayoutOrder = math.floor(now * 1000) % 1_000_000_000,
 		Children = {
@@ -63,7 +84,8 @@ function Notifications.show(kind: string, text: string, duration: number?)
 	})
 	C.outlined({
 		Text = text,
-		Size = UDim2.new(1, -20, 1, -10),
+		TextWrapped = true,
+		Size = UDim2.new(1, -24, 1, -10),
 		Position = UDim2.fromScale(0.5, 0.5),
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		Parent = toast,

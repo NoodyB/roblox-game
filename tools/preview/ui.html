@@ -1,0 +1,252 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Sweep Squad UI preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; overflow: hidden; }
+  #screen { position: relative; overflow: hidden; background: linear-gradient(#9fd4ff 0%, #bfe3a0 55%, #78b054 100%); }
+  .topbar { position: absolute; left: 0; top: 0; right: 0; background: rgba(0,0,0,0.35); z-index: 9999; }
+  .node { position: absolute; box-sizing: border-box; }
+  .text { position: absolute; inset: 0; display: flex; white-space: pre; line-height: 1.0; }
+</style>
+</head>
+<body>
+<div id="screen"></div>
+<script>
+// Roblox GUI layout emulation (enough of it to judge layout and readability).
+const FONTS = {
+  FredokaOne: "'Fredoka', sans-serif",
+  GothamBold: "'Montserrat', sans-serif",
+  Gotham: "'Montserrat', sans-serif",
+  GothamMedium: "'Montserrat', sans-serif",
+};
+const WEIGHT = { FredokaOne: 700, GothamBold: 700, Gotham: 500, GothamMedium: 500 };
+const rgb = (c, a = 1) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+// Lua empty tables arrive as {} rather than []
+const arr = (x) => (Array.isArray(x) ? x : []);
+const mod = (node, cls) => arr(node.m).find((m) => m.c === cls);
+
+let measureCtx = document.createElement("canvas").getContext("2d");
+function fitText(text, font, weight, w, h, wrapped) {
+  // largest size <= 100 whose text fits the box (Roblox TextScaled)
+  let lo = 1, hi = Math.min(100, h);
+  const lines = String(text).split("\n");
+  for (let i = 0; i < 18; i++) {
+    const mid = (lo + hi) / 2;
+    measureCtx.font = `${weight} ${mid}px ${font}`;
+    let fits;
+    if (wrapped) {
+      // greedy word wrap like the engine; every word must fit on a line and all lines in the box
+      let count = 0, ok = true;
+      for (const l of lines) {
+        let line = "";
+        count += 1;
+        for (const word of l.split(" ")) {
+          if (measureCtx.measureText(word).width > w) ok = false;
+          const next = line ? line + " " + word : word;
+          if (measureCtx.measureText(next).width > w && line) { count += 1; line = word; } else line = next;
+        }
+      }
+      fits = ok && mid * 1.05 * count <= h;
+    } else {
+      const width = Math.max(...lines.map((l) => measureCtx.measureText(l).width));
+      fits = width <= w && mid * 1.05 * lines.length <= h;
+    }
+    if (fits) lo = mid; else hi = mid;
+  }
+  return lo;
+}
+
+function udim(u, parentW, parentH) {
+  return [u[0] * parentW + u[1], u[2] * parentH + u[3]];
+}
+
+// Resolved size of a node, honouring AutomaticSize (Y only needs to be exact for our layouts).
+function nodeSize(node, parentW, parentH) {
+  const p = node.p || {};
+  let [w, h] = udim(p.Size, parentW, parentH);
+  if (p.Auto === "Y" || p.Auto === "XY") h = Math.max(h, contentHeight(node, w, h));
+  return [w, h];
+}
+
+function contentHeight(node, w, h) {
+  const pad = mod(node, "UIPadding");
+  let pt = 0, pb = 0, pl = 0, pr = 0;
+  if (pad) { pt = pad.T[0] * h + pad.T[1]; pb = pad.B[0] * h + pad.B[1]; pl = pad.L[0] * w + pad.L[1]; pr = pad.R[0] * w + pad.R[1]; }
+  const cw = w - pl - pr;
+  const kids = arr(node.k).filter((k) => (k.p || {}).Visible !== false);
+  const list = mod(node, "UIListLayout"), grid = mod(node, "UIGridLayout");
+  let inner = 0;
+  if (grid) {
+    const [cellW, cellH] = udim(grid.Cell, cw, h);
+    const [gapX, gapY] = udim(grid.Pad, cw, h);
+    const perRow = Math.max(1, Math.floor((cw + gapX) / (cellW + gapX)));
+    const rows = Math.ceil(kids.length / perRow);
+    inner = rows > 0 ? rows * cellH + (rows - 1) * gapY : 0;
+  } else if (list && list.Dir !== "Horizontal") {
+    const gap = list.Padding[1];
+    inner = kids.reduce((s, k) => s + nodeSize(k, cw, h)[1], 0) + gap * Math.max(0, kids.length - 1);
+  } else {
+    for (const k of kids) {
+      const [kw, kh] = nodeSize(k, cw, h);
+      const [, py] = udim(k.p.Position, cw, h);
+      inner = Math.max(inner, py - k.p.Anchor[1] * kh + kh);
+    }
+  }
+  return inner + pt + pb;
+}
+
+// Lay out a node inside a content rect; returns nothing, appends DOM.
+function renderNode(node, parentEl, rect, placed) {
+  const p = node.p || {};
+  if (p.Visible === false) return;
+  let w, h, x, y;
+  if (placed) {
+    [x, y, w, h] = placed;
+  } else {
+    [w, h] = nodeSize(node, rect.w, rect.h);
+    const pos = udim(p.Position, rect.w, rect.h);
+    x = pos[0] - p.Anchor[0] * w;
+    y = pos[1] - p.Anchor[1] * h;
+  }
+  const size = mod(node, "UISizeConstraint");
+  if (size && !placed) {
+    const nw = Math.min(w, size.Max[0]), nh = Math.min(h, size.Max[1]);
+    x += (w - nw) * p.Anchor[0]; y += (h - nh) * p.Anchor[1];
+    w = nw; h = nh;
+  }
+  const el = document.createElement("div");
+  el.className = "node";
+  el.style.left = x + "px"; el.style.top = y + "px"; el.style.width = w + "px"; el.style.height = h + "px";
+  el.style.zIndex = p.Z || 1;
+  if (p.Rot) el.style.transform = `rotate(${p.Rot}deg)`;
+  const bgAlpha = 1 - (p.BgT ?? 1);
+  const grad = mod(node, "UIGradient");
+  if (bgAlpha > 0.01) {
+    if (grad) {
+      // gradient multiplies the background color
+      const f = (c, g) => [c[0] * g[0] / 255, c[1] * g[1] / 255, c[2] * g[2] / 255];
+      el.style.background = `linear-gradient(180deg, ${rgb(f(p.Bg, grad.From), bgAlpha)}, ${rgb(f(p.Bg, grad.To), bgAlpha)})`;
+    } else {
+      el.style.background = rgb(p.Bg, bgAlpha);
+    }
+  }
+  const corner = mod(node, "UICorner");
+  if (corner) el.style.borderRadius = (corner.Radius[0] * Math.min(w, h) + corner.Radius[1]) + "px";
+  const strokes = arr(node.m).filter((m) => m.c === "UIStroke");
+  const isText = p.Text !== undefined;
+  for (const s of strokes) {
+    if (s.Mode === "Border" || !isText) {
+      el.style.boxShadow = `0 0 0 ${s.Thickness}px ${rgb(s.Color, 1 - s.T)}`;
+    }
+  }
+  if (node.c === "ViewportFrame") {
+    el.style.background = "repeating-linear-gradient(45deg,#e8dcc4,#e8dcc4 8px,#f0e6d2 8px,#f0e6d2 16px)";
+    el.innerHTML = "<div style='position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:600 12px sans-serif;color:#8a7a60'>3D</div>";
+  }
+  if (p.Scroll) el.style.overflow = "hidden";
+  parentEl.appendChild(el);
+
+  if (isText) {
+    const text = p.Text === "" && p.Placeholder ? p.Placeholder : p.Text;
+    if (text !== "") {
+      const t = document.createElement("div");
+      t.className = "text";
+      const font = FONTS[p.Font] || FONTS.Gotham;
+      const weight = WEIGHT[p.Font] || 600;
+      const fs = p.Scaled ? fitText(text, font, weight, w, h, p.Wrapped) : p.TextSize;
+      t.style.font = `${weight} ${fs}px ${font}`;
+      t.style.color = rgb(p.TextColor, 1 - p.TextT);
+      if (p.Wrapped) { t.style.whiteSpace = "pre-wrap"; t.style.wordBreak = "break-word"; }
+      t.style.justifyContent = { Left: "flex-start", Right: "flex-end" }[p.XAlign] || "center";
+      t.style.alignItems = { Top: "flex-start", Bottom: "flex-end" }[p.YAlign] || "center";
+      t.style.textAlign = { Left: "left", Right: "right" }[p.XAlign] || "center";
+      const textStroke = strokes.find((s) => s.Mode === "Contextual");
+      if (textStroke) {
+        const c = rgb(textStroke.Color, 1 - textStroke.T), k = textStroke.Thickness;
+        t.style.textShadow = [[k,0],[-k,0],[0,k],[0,-k],[k,k],[-k,-k],[k,-k],[-k,k]].map(([a,b]) => `${a}px ${b}px 0 ${c}`).join(",");
+      }
+      t.textContent = text;
+      el.appendChild(t);
+    }
+  }
+
+  // children content rect (padding)
+  const pad = mod(node, "UIPadding");
+  let cx = 0, cy = 0, cw = w, ch = h;
+  if (pad) {
+    const pt = pad.T[0] * h + pad.T[1], pb = pad.B[0] * h + pad.B[1], pl = pad.L[0] * w + pad.L[1], pr = pad.R[0] * w + pad.R[1];
+    cx = pl; cy = pt; cw = w - pl - pr; ch = h - pt - pb;
+  }
+  const inner = document.createElement("div");
+  inner.className = "node";
+  inner.style.left = cx + "px"; inner.style.top = cy + "px"; inner.style.width = cw + "px"; inner.style.height = ch + "px";
+  el.appendChild(inner);
+  const childRect = { w: cw, h: ch };
+  const kids = arr(node.k).filter((k) => (k.p || {}).Visible !== false).sort((a, b) => (a.p.Order || 0) - (b.p.Order || 0));
+  const list = mod(node, "UIListLayout");
+  const grid = mod(node, "UIGridLayout");
+  if (list) {
+    const vertical = list.Dir !== "Horizontal";
+    const gap = list.Padding[0] * (vertical ? ch : cw) + list.Padding[1];
+    const sizes = kids.map((k) => nodeSize(k, cw, ch));
+    const total = sizes.reduce((s, sz) => s + (vertical ? sz[1] : sz[0]), 0) + gap * Math.max(0, kids.length - 1);
+    let cursor;
+    const mainAlign = vertical ? list.V : list.H;
+    cursor = mainAlign === "Center" ? ((vertical ? ch : cw) - total) / 2 : (mainAlign === "Bottom" || mainAlign === "Right") ? (vertical ? ch : cw) - total : 0;
+    kids.forEach((k, i) => {
+      const [kw, kh] = sizes[i];
+      const crossAlign = vertical ? list.H : list.V;
+      const crossSpace = vertical ? cw - kw : ch - kh;
+      const cross = crossAlign === "Center" ? crossSpace / 2 : (crossAlign === "Right" || crossAlign === "Bottom") ? crossSpace : 0;
+      const px = vertical ? cross : cursor, py = vertical ? cursor : cross;
+      renderNode(k, inner, childRect, [px, py, kw, kh]);
+      cursor += (vertical ? kh : kw) + gap;
+    });
+  } else if (grid) {
+    const [cellW, cellH] = udim(grid.Cell, cw, ch);
+    const [gapX, gapY] = udim(grid.Pad, cw, ch);
+    const perRow = Math.max(1, Math.floor((cw + gapX) / (cellW + gapX)));
+    const rowWidth = perRow * cellW + (perRow - 1) * gapX;
+    const offsetX = grid.H === "Center" ? (cw - rowWidth) / 2 : 0;
+    kids.forEach((k, i) => {
+      const col = i % perRow, row = Math.floor(i / perRow);
+      renderNode(k, inner, childRect, [offsetX + col * (cellW + gapX), row * (cellH + gapY), cellW, cellH]);
+    });
+  } else {
+    for (const k of kids) renderNode(k, inner, childRect);
+  }
+}
+
+window.renderUI = (tree) => {
+  const [vw, vh] = tree.viewport;
+  const screen = document.getElementById("screen");
+  screen.style.width = vw + "px"; screen.style.height = vh + "px";
+  if (tree.inset > 0) {
+    const bar = document.createElement("div");
+    bar.className = "topbar"; bar.style.height = tree.inset + "px";
+    screen.appendChild(bar);
+  }
+  const guis = tree.guis.filter((g) => g.p.Enabled !== false).sort((a, b) => a.p.DisplayOrder - b.p.DisplayOrder);
+  for (const gui of guis) {
+    const scale = (mod(gui, "UIScale") || { Scale: 1 }).Scale;
+    const layer = document.createElement("div");
+    layer.className = "node";
+    const top = tree.inset;
+    layer.style.left = "0px"; layer.style.top = top + "px";
+    const canvasW = vw / scale, canvasH = (vh - top) / scale;
+    layer.style.width = canvasW + "px"; layer.style.height = canvasH + "px";
+    layer.style.transformOrigin = "0 0";
+    layer.style.transform = `scale(${scale})`;
+    layer.style.zIndex = 10 + gui.p.DisplayOrder;
+    screen.appendChild(layer);
+    for (const k of arr(gui.k)) renderNode(k, layer, { w: canvasW, h: canvasH });
+  }
+  window.uiDone = true;
+};
+window.uiReady = true;
+</script>
+</body>
+</html>

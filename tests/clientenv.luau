@@ -11,6 +11,9 @@ local Mocks = require("./mocks")
 
 local ClientEnv = {}
 
+-- Simulated screen size (read by Camera.ViewportSize); UI previews change it per device.
+ClientEnv.viewport = Vector2.new(1280, 720)
+
 -- Strong tables on purpose: a proxy must stay identical for the lifetime of its instance,
 -- otherwise signals connected on one proxy would not fire on another.
 local proxyToReal = {}
@@ -120,7 +123,7 @@ wrap = function(value)
 			if not ok then
 				-- runtime-only properties the file format (and so Lune) doesn't model
 				if key == "ViewportSize" then
-					return Vector2.new(1280, 720)
+					return ClientEnv.viewport
 				elseif key == "AbsoluteSize" then
 					return Vector2.new(100, 100)
 				elseif key == "AbsolutePosition" then
@@ -270,8 +273,8 @@ function ClientEnv.install(Harness)
 	Harness.setService("TweenService", env.tween)
 	Harness.setService("RunService", runService)
 	Harness.setService("UserInputService", {
-		TouchEnabled = false,
-		KeyboardEnabled = true,
+		TouchEnabled = ClientEnv.touch == true,
+		KeyboardEnabled = ClientEnv.touch ~= true,
 		InputBegan = Mocks.signal(),
 		GetFocusedTextBox = function()
 			return nil

@@ -23,7 +23,7 @@ Co-op cleaning incremental with 8 themed zones, collectible critters, zone-clear
 - Analytics: onboarding funnel, economy, progression and custom events.
 - Seasonal events: Haunted Hollow for Halloween 2026 (event critters, palette, hub decor). Promo codes. Invite button, squad chip, VIP chat tags.
 - Badges (6 milestones) and a Roblox group bonus (+10%); auto Low Graphics on slow devices; a prebuilt `release/SweepSquad.rbxl`.
-- Tooling: 120 tests, lint, format, place build and validator, economy simulator, geometry preview renderer (`tools/preview`), promo art including real-render thumbnails.
+- Tooling: 120 tests, lint, format, place build and validator, economy simulator, geometry preview renderer and UI layout previews for phone, tablet and PC (`tools/preview`, `docs/previews/`), promo art including real-render thumbnails.
 
 ## Remaining work
 | Item | Owner | Notes |

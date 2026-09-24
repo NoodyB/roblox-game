@@ -100,7 +100,10 @@ local function step(dt: number)
 				end
 				local basis = CFrame.lookAt(Vector3.zero, flat.Unit)
 				local moving = root.AssemblyLinearVelocity.Magnitude > 2
-				local groundY = rootPos.Y - 3
+				-- feet level = root centre - half the root - HipHeight (works for R6, R15 and Rthro scales)
+				local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+				local hip = if humanoid and humanoid.RigType == Enum.HumanoidRigType.R15 then humanoid.HipHeight else 2
+				local groundY = rootPos.Y - root.Size.Y / 2 - hip
 				for i, follower in entry.followers do
 					local offset = basis:VectorToWorldSpace(SLOT_OFFSETS[i])
 					local hop = if moving

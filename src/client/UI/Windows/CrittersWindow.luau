@@ -208,7 +208,7 @@ return function(request: (string, any?) -> (boolean, any))
 		tabs.Book = C.button({ Text = "📖 Critter Book", Size = UDim2.fromOffset(200, 46), Position = UDim2.fromOffset(192, 0), Parent = top, OnClick = function()
 			selectTab("Book")
 		end })
-		header = C.label({ Size = UDim2.fromOffset(200, 40), Position = UDim2.new(1, -170, 0, 4), AnchorPoint = Vector2.new(1, 0), TextXAlignment = Enum.TextXAlignment.Right, Parent = top })
+		header = C.label({ Size = UDim2.fromOffset(170, 40), Position = UDim2.new(1, -172, 0, 4), AnchorPoint = Vector2.new(1, 0), TextXAlignment = Enum.TextXAlignment.Right, Parent = top })
 		C.button({
 			Text = "Equip Best",
 			Size = UDim2.fromOffset(160, 46),
