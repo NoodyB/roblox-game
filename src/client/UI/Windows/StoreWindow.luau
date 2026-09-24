@@ -10,6 +10,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage.Shared
 local Theme = require(Shared.Config.Theme)
 local Products = require(Shared.Config.Products)
+local GameConfig = require(Shared.Config.GameConfig)
 local Economy = require(Shared.Logic.Economy)
 local Format = require(Shared.Util.Format)
 local C = require(script.Parent.Parent.Components)
@@ -21,6 +22,7 @@ return function()
 	type Card = { buy: C.Button, price: TextLabel, detail: TextLabel?, kind: string, id: number, key: string }
 	local cards: { Card } = {}
 	local prices: { [number]: number } = {}
+	local groupHint: TextLabel? = nil
 
 	local function fetchPrice(id: number, infoType: Enum.InfoType, card: Card)
 		if id == 0 then
@@ -86,6 +88,9 @@ return function()
 	end
 
 	local function refresh(state: any)
+		if groupHint then
+			groupHint.Visible = GameConfig.GroupId ~= 0 and not (state.passes and state.passes.GroupMember)
+		end
 		for _, card in cards do
 			if card.kind == "pass" then
 				local owned = state.passes and state.passes[card.key]
@@ -120,6 +125,14 @@ return function()
 		for index, product in Products.DevProducts do
 			makeCard(items, index, product.emoji, product.name, product.description, product.priceHint, product.kind, product.id, product.key)
 		end
+		groupHint = C.label({
+			Text = string.format("👥 Join our Roblox group for +%d%% coins, free!", math.floor(GameConfig.GroupBonus * 100)),
+			TextColor3 = Colors.GreenDark,
+			Size = UDim2.new(1, 0, 0, 30),
+			LayoutOrder = 99,
+			Visible = false,
+			Parent = scroll,
+		})
 		C.label({
 			Text = "Everything in Sweep Squad can be earned for free. Purchases just speed things up. 💛",
 			Font = Theme.Fonts.Bold,

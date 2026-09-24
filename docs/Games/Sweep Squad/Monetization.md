@@ -33,7 +33,9 @@ Prices are hints for the store UI; the real price is fetched from Roblox. Review
 3. **Monetization → Developer Products:** create the 6 products and copy each product ID.
 4. Paste the IDs into `src/shared/Config/Products.luau`, replacing `id = 0`. Commit and push, then rebuild or resync.
 5. Test in Studio. Test purchases there don't charge Robux: buy each product and pass, and confirm the grant plus the "✓ Owned" state. Studio purchase prompts are simulated.
-6. Optional: enable **Private Servers** in Experience settings. A free or low-priced private server option helps friend groups play together (co-op). *Decide the price: suggested free or 50 R$/month.*
+6. **Badges (free):** Creator Dashboard → Badges. Create the 6 milestone badges listed in `src/shared/Config/Badges.luau` and paste their IDs.
+7. **Group bonus (free):** create a Roblox group for the studio and put its ID in `GameConfig.GroupId`. Members get +10% coins, and the group gives you an audience for update announcements.
+8. Optional: enable **Private Servers** in Experience settings. A free or low-priced private server option helps friend groups play together (co-op). *Decide the price: suggested free or 50 R$/month.*
 
 ## Technical guarantees (tested offline in `tests/specs/server.spec.luau`)
 - `ProcessReceipt` looks up the product, waits up to 10 s for the profile, and checks the PurchaseId history (the last 100 purchases are kept per profile).

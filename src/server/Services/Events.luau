@@ -15,4 +15,5 @@ return {
 	Rebirthed = Signal.new(), -- (player, rebirthCount)
 	PlayMinute = Signal.new(), -- (player) once per minute of play
 	Purchased = Signal.new(), -- (player, productKey)
+	GoldenMade = Signal.new(), -- (player, critterId)
 }

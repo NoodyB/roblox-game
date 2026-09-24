@@ -358,6 +358,21 @@ function Mocks.runService(isStudio: boolean?)
 	}
 end
 
+function Mocks.badges()
+	return {
+		awarded = {},
+		owned = {},
+		UserHasBadgeAsync = function(self, userId, badgeId)
+			return self.owned[userId .. ":" .. badgeId] == true
+		end,
+		AwardBadge = function(self, userId, badgeId)
+			table.insert(self.awarded, userId .. ":" .. badgeId)
+			self.owned[userId .. ":" .. badgeId] = true
+			return true
+		end,
+	}
+end
+
 function Mocks.analytics()
 	local calls = {}
 	local service = { calls = calls }
@@ -389,6 +404,7 @@ function Mocks.install(Harness, options)
 		MarketplaceService = Mocks.marketplace(),
 		RunService = Mocks.runService(options.studio),
 		AnalyticsService = Mocks.analytics(),
+		BadgeService = Mocks.badges(),
 		Workspace = Mocks.workspace(),
 	}
 	for name, service in m do

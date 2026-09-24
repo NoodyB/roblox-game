@@ -16,6 +16,7 @@ local ORDER = {
 	"ShopService",
 	"MonetizationService",
 	"LeaderboardService",
+	"BadgeService",
 	"DebugService",
 }
 

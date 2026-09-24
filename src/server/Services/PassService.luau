@@ -13,6 +13,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage.Shared
 local Products = require(Shared.Config.Products)
+local GameConfig = require(Shared.Config.GameConfig)
 local Signal = require(Shared.Util.Signal)
 
 local PassService = {}
@@ -42,6 +43,13 @@ local function checkOwnership(player: Player)
 				task.wait(attempt)
 			end
 		end
+	end
+	-- Group membership bonus (treated like a free "pass" so Stats can apply it)
+	if GameConfig.GroupId ~= 0 then
+		local ok, member = pcall(function()
+			return player:IsInGroup(GameConfig.GroupId)
+		end)
+		result.GroupMember = ok and member == true
 	end
 	if player.Parent then
 		owned[player] = result

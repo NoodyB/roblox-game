@@ -417,6 +417,31 @@ return function(t)
 		end)
 	end)
 
+	describe("BadgeService", function()
+		it("awards configured milestone badges once and skips unconfigured ones", function()
+			local Badges = R("ReplicatedStorage.Shared.Config.Badges")
+			local BadgeService = R("ServerScriptService.Server.Services.BadgeService")
+			for i, badge in Badges do
+				badge.id = if badge.key == "GoldenCritter" then 0 else 5000 + i
+			end
+			BadgeService:Init()
+			local player = join() -- fires ProfileLoaded -> Welcome
+			Events.CritterFound:Fire(player, "squirrel")
+			Events.CritterFound:Fire(player, "fox") -- duplicate trigger, no second award
+			Events.ZoneUnlocked:Fire(player, 8)
+			Events.GoldenMade:Fire(player, "fox") -- id 0: skipped
+			task.wait(0.05)
+			local awarded = mocks.BadgeService.awarded
+			local count = 0
+			for _, entry in awarded do
+				if string.sub(entry, 1, #tostring(player.UserId) + 1) == player.UserId .. ":" then
+					count += 1
+				end
+			end
+			expect(count).toBe(4) -- Welcome, FirstCritter, Zone4, AllZones
+		end)
+	end)
+
 	describe("Events wiring", function()
 		it("tracks quest progress from gameplay events", function()
 			local player = join()

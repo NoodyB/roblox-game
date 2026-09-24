@@ -22,7 +22,8 @@ Co-op cleaning incremental with 8 themed zones, collectible critters, zone-clear
 - Client: HUD, 7 windows, responsive scaling for phone to PC, effects, sounds, loading screen, PC hotkeys.
 - Analytics: onboarding funnel, economy, progression and custom events.
 - Seasonal events: Haunted Hollow for Halloween 2026 (event critters, palette, hub decor). Promo codes. Invite button, squad chip, VIP chat tags.
-- Tooling: 117 tests, lint, format, place build and validator, economy simulator, geometry preview renderer (`tools/preview`), promo art including real-render thumbnails.
+- Badges (6 milestones) and a Roblox group bonus (+10%); auto Low Graphics on slow devices; a prebuilt `release/SweepSquad.rbxl`.
+- Tooling: 120 tests, lint, format, place build and validator, economy simulator, geometry preview renderer (`tools/preview`), promo art including real-render thumbnails.
 
 ## Remaining work
 | Item | Owner | Notes |
@@ -30,7 +31,7 @@ Co-op cleaning incremental with 8 themed zones, collectible critters, zone-clear
 | Studio playtest checklist | **You** | [Studio Setup & Playtest Guide](docs/Games/Sweep%20Squad/Studio%20Setup%20%26%20Playtest%20Guide.md) |
 | Fix issues found in Studio | Claude (next session) | Paste Output errors into Known Issues or an issue |
 | Real-device performance check | **You** | Mid-range phone; record FPS in Testing & QA |
-| Create passes and products, paste IDs | **You** | [Monetization](docs/Games/Sweep%20Squad/Monetization.md) checklist |
+| Create passes, products and badges; set the group ID | **You** | [Monetization](docs/Games/Sweep%20Squad/Monetization.md) checklist (the IDs go in `Config/Products`, `Config/Badges` and `GameConfig.GroupId`) |
 | Licensed music and nicer SFX | **You** or Claude | [Assets & Audio](docs/Games/Sweep%20Squad/Assets%20%26%20Audio.md) |
 | Real screenshots for thumbnails | **You** | Concepts are in `marketing/` |
 | Publish publicly | **You (approval)** | After a private test |
@@ -41,7 +42,7 @@ Co-op cleaning incremental with 8 themed zones, collectible critters, zone-clear
 See [Known Issues](docs/Games/Sweep%20Squad/Known%20Issues.md). There are no known failing tests. The main risks are in-engine visual offsets (gear, followers) and real-device performance.
 
 ## Last successful test results (2026-09-24)
-- `./tools/check.sh` passes all steps: stylua ✅, selene 0/0 ✅, **117 passed / 0 failed** ✅, rojo build ✅, place validation ✅.
+- `./tools/check.sh` passes all steps: stylua ✅, selene 0/0 ✅, **120 passed / 0 failed** ✅, rojo build ✅, place validation ✅.
 
 ## Development environment
 - Cloud: Ubuntu 24.04. Toolchain built from crates.io (GitHub downloads are blocked): Rojo 7.7.0, Lune 0.10.5, Selene 0.31.0, StyLua 2.5.2.

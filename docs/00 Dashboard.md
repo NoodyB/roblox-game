@@ -9,7 +9,7 @@ updated: 2026-09-24
 ## Portfolio
 | Game | Status | Phase | Next action |
 |---|---|---|---|
-| 🍂 [[Game Design Document\|Sweep Squad]] | Implemented; tested offline (105 tests) | M7 QA → Studio playtest | Owner: run the [[Studio Setup & Playtest Guide]] |
+| 🍂 [[Game Design Document\|Sweep Squad]] | Implemented; tested offline (120 tests) | M7 QA → Studio playtest | Owner: run the [[Studio Setup & Playtest Guide]] |
 
 ## Milestones (Sweep Squad)
 | # | Milestone | Status |
@@ -26,7 +26,7 @@ updated: 2026-09-24
 
 ## Waiting on you (the owner)
 1. **Studio playtest** (about 30 minutes): [[Studio Setup & Playtest Guide]]. Paste any errors into [[Known Issues]].
-2. **Publish privately** and create the passes and products: [[Monetization]] setup checklist.
+2. **Publish privately** and create the passes, products and badges, and set the group ID: [[Monetization]] setup checklist.
 3. **Approvals:** making the game public, any ad spend, and the private server price.
 
 ## Business docs

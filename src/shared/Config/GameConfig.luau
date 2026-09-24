@@ -42,6 +42,8 @@ local GameConfig = {
 	ZoneClearBonusFactor = 0.5, -- contributors get this fraction of their contributed value as bonus
 
 	-- Social
+	GroupId = 0, -- your Roblox group id; members get GroupBonus coins (0 = disabled)
+	GroupBonus = 0.1,
 	SquadRadius = 40,
 	SquadBonusPerPlayer = 0.1,
 	SquadBonusMax = 0.3,

@@ -175,6 +175,12 @@ return function(t)
 			expect(s.coinMultiplier).toBeCloseTo(1 + 0.2 * 3)
 		end)
 
+		it("applies the group member bonus", function()
+			local p = DataSchema.new(0)
+			local s = Stats.compute(p, { passes = { GroupMember = true } })
+			expect(s.coinMultiplier).toBeCloseTo(1 + GameConfig.GroupBonus)
+		end)
+
 		it("applies the collect boost", function()
 			local p = DataSchema.new(0)
 			p.boosts.collect2x = 5

@@ -100,6 +100,7 @@ function CritterService:Init()
 		if ok then
 			PlayerService.refresh(player)
 			Net.fire("Effect", player, "golden", { id = critterId })
+			Events.GoldenMade:Fire(player, critterId)
 		end
 		return ok, err
 	end)

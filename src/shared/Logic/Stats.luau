@@ -98,6 +98,9 @@ function Stats.compute(data: any, ctx: Context?): Result
 	if passes.VIP then
 		coinMultiplier *= Products.VipCoinMultiplier
 	end
+	if passes.GroupMember then
+		coinMultiplier *= 1 + GameConfig.GroupBonus
+	end
 	if coinBoost then
 		coinMultiplier *= 2
 	end
