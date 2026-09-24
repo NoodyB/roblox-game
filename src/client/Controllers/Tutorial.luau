@@ -202,29 +202,34 @@ local function radarTarget(): Vector3?
 	return DebrisRenderer.nearestDebris(p.X, p.Z, zoneId)
 end
 
+local function beamStep()
+	local target: Vector3?
+	local radar = false
+	if step < DONE then
+		target = targetFor(step)
+	else
+		target = radarTarget()
+		radar = target ~= nil
+	end
+	if target then
+		targetPart.CFrame = CFrame.new(target)
+		local b = ensureBeam()
+		if b then
+			b.Enabled = true
+			b.Color = ColorSequence.new(if radar then Colors.Blue else Colors.Gold)
+			b.Width0 = if radar then 0.6 else 1.2
+			b.Width1 = b.Width0
+		end
+	elseif beam then
+		beam.Enabled = false
+	end
+end
+Tutorial._beamStep = beamStep
+
 function Tutorial:Start()
 	task.spawn(function()
 		while true do
-			local target: Vector3?
-			local radar = false
-			if step < DONE then
-				target = targetFor(step)
-			else
-				target = radarTarget()
-				radar = target ~= nil
-			end
-			if target then
-				targetPart.CFrame = CFrame.new(target)
-				local b = ensureBeam()
-				if b then
-					b.Enabled = true
-					b.Color = ColorSequence.new(if radar then Colors.Blue else Colors.Gold)
-					b.Width0 = if radar then 0.6 else 1.2
-					b.Width1 = b.Width0
-				end
-			elseif beam then
-				beam.Enabled = false
-			end
+			beamStep()
 			task.wait(0.5)
 		end
 	end)

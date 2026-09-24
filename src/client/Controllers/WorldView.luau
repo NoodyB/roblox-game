@@ -240,20 +240,25 @@ function WorldView:Init()
 	end)
 end
 
+local function zoneStep()
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if root then
+		local zoneId = ZoneLayout.zoneAt(root.Position.X, root.Position.Z)
+		if zoneId ~= currentZone and zoneId ~= nil then
+			currentZone = zoneId
+			applyAmbience(zoneId)
+			showTitle(zoneId)
+		end
+	end
+end
+WorldView._zoneStep = zoneStep
+
 function WorldView:Start()
 	styleAllGates()
 	task.spawn(function()
 		while true do
-			local character = player.Character
-			local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
-			if root then
-				local zoneId = ZoneLayout.zoneAt(root.Position.X, root.Position.Z)
-				if zoneId ~= currentZone and zoneId ~= nil then
-					currentZone = zoneId
-					applyAmbience(zoneId)
-					showTitle(zoneId)
-				end
-			end
+			zoneStep()
 			task.wait(0.3)
 		end
 	end)

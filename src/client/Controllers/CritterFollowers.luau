@@ -151,5 +151,6 @@ function CritterFollowers:Start()
 end
 
 CritterFollowers._rebuild = rebuild
+CritterFollowers._step = step
 
 return CritterFollowers

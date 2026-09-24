@@ -393,31 +393,39 @@ function DebrisRenderer:Init()
 	end)
 end
 
+-- One streaming pass: build visuals for zones near the focus point, drop far ones.
+local function streamStep()
+	if not ready then
+		return
+	end
+	local focus: Vector3
+	local character = player.Character
+	local rootPart = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if rootPart then
+		focus = rootPart.Position
+	else
+		local camera = Workspace.CurrentCamera
+		focus = if camera then camera.Focus.Position else Vector3.zero
+	end
+	for zoneId = 1, #Zones do
+		local cx = ZoneLayout.center(zoneId)
+		local near = math.abs(focus.X - cx) <= ACTIVE_RANGE
+		if near and not visuals[zoneId] then
+			buildZone(zoneId)
+		elseif not near and visuals[zoneId] then
+			destroyZone(zoneId)
+		end
+	end
+end
+
 function DebrisRenderer:Start()
-	-- stream zone visuals in/out around the camera focus
+	-- stream zone visuals in/out around the camera focus; re-check seasonal events every ~30s
 	task.spawn(function()
+		local ticks = 0
 		while true do
-			if ready then
-				local focus: Vector3
-				local character = player.Character
-				local rootPart = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
-				if rootPart then
-					focus = rootPart.Position
-				else
-					local camera = Workspace.CurrentCamera
-					focus = if camera then camera.Focus.Position else Vector3.zero
-				end
-				for zoneId = 1, #Zones do
-					local cx = ZoneLayout.center(zoneId)
-					local near = math.abs(focus.X - cx) <= ACTIVE_RANGE
-					if near and not visuals[zoneId] then
-						buildZone(zoneId)
-					elseif not near and visuals[zoneId] then
-						destroyZone(zoneId)
-					end
-				end
-			end
-			if os.clock() % 30 < 0.5 then
+			streamStep()
+			ticks += 1
+			if ticks % 60 == 0 then
 				DebrisRenderer.refreshEvent()
 			end
 			task.wait(0.5)
@@ -425,6 +433,7 @@ function DebrisRenderer:Start()
 	end)
 end
 
+DebrisRenderer._streamStep = streamStep
 DebrisRenderer._buildZone = buildZone
 
 return DebrisRenderer

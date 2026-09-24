@@ -251,6 +251,52 @@ return function(t)
 		end)
 	end)
 
+	describe("per-frame loops with a character in a zone", function()
+		it("runs HUD, streaming, ambience, tutorial beam and follower steps", function()
+			-- a minimal character standing in Backyard Lane (proxied like all client instances)
+			local Instance = ClientEnv.Instance
+			local character = Instance.new("Model")
+			character.Name = "Tester"
+			local root = Instance.new("Part")
+			root.Name = "HumanoidRootPart"
+			local cx = ZoneLayout.center(1)
+			root.CFrame = CFrame.new(cx, 3, 30)
+			root.Parent = character
+			local humanoid = Instance.new("Humanoid")
+			humanoid.Parent = character
+			character.Parent = env.workspace
+			env.player.Character = character
+			env.player:SetAttribute("Coins", 1234)
+			env.player:SetAttribute("BagUnits", 40)
+			env.player:SetAttribute("BagCapacity", 40)
+			env.player:SetAttribute("Radius", 6)
+			env.player:SetAttribute("Equipped", "fox")
+
+			HUD.tick()
+			HUD.tick()
+			DebrisRenderer._streamStep()
+			WorldView._zoneStep()
+			Tutorial._beamStep()
+			CritterFollowers._rebuild(env.player)
+			CritterFollowers._step(1 / 60)
+			task.wait(0.1)
+
+			-- moving to zone 3 streams visuals away from zone 1 and toward zone 3
+			root.CFrame = CFrame.new(ZoneLayout.center(3), 3, 30)
+			DebrisRenderer._streamStep()
+			WorldView._zoneStep()
+			HUD.tick()
+			local visuals = env.workspace:FindFirstChild("DebrisVisuals")
+			expect(visuals:FindFirstChild("Zone1")).toBeNil()
+			expect(visuals:FindFirstChild("Zone3")).toBeTruthy()
+
+			-- radar mode after the tutorial, near-clean zone
+			state.tutorialStep = 5
+			ClientState.Changed:Fire(state)
+			Tutorial._beamStep()
+		end)
+	end)
+
 	describe("world views", function()
 		it("builds critter followers for equipped critters", function()
 			CritterFollowers._rebuild(env.player)
