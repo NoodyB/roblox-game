@@ -65,7 +65,7 @@ end
 local SHAPES = {
 	leaf = { main = Vector3.new(4.6, 1.1, 4.6), extra = Vector3.new(1.8, 0.14, 1.1), mat = Enum.Material.Grass },
 	acorn = { main = Vector3.new(4.2, 1.0, 4.2), extra = Vector3.new(0.9, 1.0, 0.9), mat = Enum.Material.Grass },
-	cone = { main = Vector3.new(4.2, 1.0, 4.2), extra = Vector3.new(0.9, 1.3, 0.9), mat = Enum.Material.Grass },
+	cone = { main = Vector3.new(4.2, 1.0, 4.2), extra = Vector3.new(1.3, 0.9, 0.9), mat = Enum.Material.Grass }, -- cylinder: X = length, Y = Z = diameter
 	shell = { main = Vector3.new(4.0, 0.8, 4.0), extra = Vector3.new(1.3, 0.6, 1.3), mat = Enum.Material.SmoothPlastic },
 	snow = { main = Vector3.new(4.8, 1.6, 4.8), extra = Vector3.new(1.4, 1.2, 1.4), mat = Enum.Material.Snow },
 	sprinkle = { main = Vector3.new(4.0, 0.9, 4.0), extra = Vector3.new(0.35, 1.0, 0.35), mat = Enum.Material.SmoothPlastic },
@@ -73,9 +73,18 @@ local SHAPES = {
 	star = { main = Vector3.new(4.0, 0.8, 4.0), extra = Vector3.new(0.7, 0.7, 0.7), mat = Enum.Material.SmoothPlastic },
 }
 
+-- Debris sizes are non-uniform, and Roblox forces Ball parts to be uniform, so "ball" debris uses a
+-- Block part with a Sphere SpecialMesh that stretches with the part's size.
 local function newPart(parent: Instance, shape: Enum.PartType, material: Enum.Material): Part
 	local p = Instance.new("Part")
-	p.Shape = shape
+	if shape == Enum.PartType.Ball then
+		p.Shape = Enum.PartType.Block
+		local mesh = Instance.new("SpecialMesh")
+		mesh.MeshType = Enum.MeshType.Sphere
+		mesh.Parent = p
+	else
+		p.Shape = shape
+	end
 	p.Anchored = true
 	p.CanCollide = false
 	p.CanQuery = false

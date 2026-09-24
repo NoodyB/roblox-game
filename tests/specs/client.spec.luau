@@ -194,6 +194,26 @@ return function(t)
 			expect(DebrisRenderer.cleanFraction(1)).toBeGreaterThan(0)
 		end)
 
+		it("uses only engine-valid shapes for debris", function()
+			for zoneId = 1, 8 do
+				DebrisRenderer._buildZone(zoneId)
+			end
+			task.wait(0.2)
+			local folder = env.workspace:FindFirstChild("DebrisVisuals")
+			local bad = 0
+			for _, d in folder:GetDescendants() do
+				if d.ClassName == "Part" then
+					local size = d.Size
+					if d.Shape == Enum.PartType.Ball and (math.abs(size.X - size.Y) > 1e-3 or math.abs(size.Y - size.Z) > 1e-3) then
+						bad += 1
+					elseif d.Shape == Enum.PartType.Cylinder and math.abs(size.Y - size.Z) > 1e-3 then
+						bad += 1
+					end
+				end
+			end
+			expect(bad).toBe(0)
+		end)
+
 		it("rebuilds golden waves and switches graphics modes", function()
 			local originX, originZ, cols, rows = ZoneLayout.debrisArea(1)
 			local grid = DebrisGrid.new({ cols = cols, rows = rows, cellSize = GameConfig.CellSize, originX = originX, originZ = originZ, cellMax = GameConfig.CellMax, mask = ZoneLayout.mask(1) })

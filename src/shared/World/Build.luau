@@ -43,11 +43,24 @@ function Build.block(parent: Instance, size: Vector3, cf: CFrame, color: Color3,
 	return p
 end
 
+-- Sphere or ellipsoid. Roblox forces Ball-shaped parts to a uniform size, so non-uniform sizes use
+-- a Block part with a Sphere SpecialMesh (which stretches to the part's size) instead.
 function Build.ball(parent: Instance, size: Vector3, cf: CFrame, color: Color3, opts: PartOptions?): Part
 	local p = Instance.new("Part")
-	p.Shape = Enum.PartType.Ball
+	if Build.isUniform(size) then
+		p.Shape = Enum.PartType.Ball
+	else
+		p.Shape = Enum.PartType.Block
+		local mesh = Instance.new("SpecialMesh")
+		mesh.MeshType = Enum.MeshType.Sphere
+		mesh.Parent = p
+	end
 	apply(p, parent, size, cf, color, opts)
 	return p
+end
+
+function Build.isUniform(size: Vector3): boolean
+	return math.abs(size.X - size.Y) < 1e-3 and math.abs(size.Y - size.Z) < 1e-3
 end
 
 -- Vertical cylinder of the given height and diameter, with its center at cf.

@@ -27,6 +27,52 @@ return function(t)
 		return n
 	end
 
+	-- Roblox engine rules that Lune does not enforce: Ball parts are always uniform spheres, and a
+	-- Cylinder's round cross-section uses min(Y, Z). Violations render wrong in the real engine.
+	local function checkShapes(root, label)
+		local bad = {}
+		local nodes = root:GetDescendants()
+		if root:IsA("BasePart") then
+			table.insert(nodes, root)
+		end
+		for _, d in nodes do
+			if d:IsA("Part") then
+				local size = d.Size
+				if d.Shape == Enum.PartType.Ball then
+					if math.abs(size.X - size.Y) > 1e-3 or math.abs(size.Y - size.Z) > 1e-3 then
+						table.insert(bad, label .. ": non-uniform Ball " .. d:GetFullName())
+					end
+				elseif d.Shape == Enum.PartType.Cylinder then
+					if math.abs(size.Y - size.Z) > 1e-3 then
+						table.insert(bad, label .. ": elliptic Cylinder " .. d:GetFullName())
+					end
+				end
+			end
+		end
+		if #bad > 0 then
+			error(table.concat(bad, "\n", 1, math.min(#bad, 10)))
+		end
+	end
+	t.checkShapes = checkShapes
+
+	describe("Engine shape rules", function()
+		it("map, props, critters and gear only use valid ball and cylinder sizes", function()
+			local parent = Instance.new("Folder")
+			local refs = MapBuilder.build(parent, { hubDecor = "jackOLantern" })
+			checkShapes(refs.map, "map")
+			for _, critter in Critters.List do
+				checkShapes(CritterModels.build(critter.id, false, nil, CFrame.new(), 1.3), critter.id)
+				checkShapes(CritterModels.build(critter.id, true, nil, CFrame.new(), 0.8), critter.id .. " golden")
+			end
+			for tier = 1, #Upgrades.Vacuums do
+				local folder = Instance.new("Folder")
+				GearModels.buildVacuum(folder, tier, CFrame.new())
+				GearModels.buildBag(folder, math.min(tier, #Upgrades.Bags), CFrame.new())
+				checkShapes(folder, "gear " .. tier)
+			end
+		end)
+	end)
+
 	describe("MapBuilder", function()
 		local workspace = Instance.new("Folder")
 		local refs = MapBuilder.build(workspace)
