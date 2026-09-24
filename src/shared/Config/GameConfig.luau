@@ -38,6 +38,7 @@ local GameConfig = {
 	ZoneClearThreshold = 0.97, -- fraction cleaned that counts as a full clear
 	GustDelay = 4, -- seconds between a zone clear and the refill
 	GoldenWaveMultiplier = 3,
+	GoldenCooldown = 180, -- min seconds between golden waves in a zone (busy servers clear zones fast)
 	ZoneClearBonusFactor = 0.5, -- contributors get this fraction of their contributed value as bonus
 
 	-- Social

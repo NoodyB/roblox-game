@@ -36,6 +36,7 @@ type ZoneState = {
 	wave: number,
 	golden: boolean,
 	clearing: boolean,
+	lastGolden: number,
 	contributions: { [Player]: number },
 }
 
@@ -131,7 +132,8 @@ local function startClear(zoneId: number)
 		end
 	end
 
-	local nextGolden = not state.golden
+	-- alternate normal/golden, but never more often than GoldenCooldown (crowded servers clear fast)
+	local nextGolden = not state.golden and os.clock() - state.lastGolden >= GameConfig.GoldenCooldown
 	Net.fireAll(
 		"Notify",
 		"success",
@@ -146,6 +148,9 @@ local function startClear(zoneId: number)
 	task.delay(GameConfig.GustDelay, function()
 		state.wave += 1
 		state.golden = nextGolden
+		if nextGolden then
+			state.lastGolden = os.clock()
+		end
 		state.grid:fill()
 		state.clearing = false
 		dirty[zoneId] = nil
@@ -316,7 +321,7 @@ function DebrisService:Init()
 			reachPadding = GameConfig.CellReachPadding,
 		})
 		grid:fill()
-		zones[zoneId] = { grid = grid, wave = 1, golden = false, clearing = false, contributions = {} }
+		zones[zoneId] = { grid = grid, wave = 1, golden = false, clearing = false, lastGolden = -math.huge, contributions = {} }
 		pads[zoneId] = ZoneLayout.sellPads(zoneId)
 	end
 

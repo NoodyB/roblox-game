@@ -51,9 +51,20 @@ These are **not** claimed as tested:
 Follow [[Studio Setup & Playtest Guide]] and record results below.
 
 ## Performance measurements
-| Date | Device | Location | FPS | Memory | Server step | Notes |
+### Server script cost (measured offline, `lune run tools/bench_server.luau <players> <ticks>`)
+This runs the real `DebrisService.step` and replication encode for players roaming zone 3 with zone-appropriate gear. Lune runs the same Luau VM as Roblox (without native codegen). Engine costs (physics, network transport) are excluded.
+
+| Date | Players | Avg per 0.2 s tick | p99 | Share of tick budget | Debris replication per client | Waves cleared per 100 s |
 |---|---|---|---|---|---|---|
-| (pending) | | | | | | |
+| 2026-09-24 | 12 | 0.113 ms | 0.320 ms | 0.06% | ≈ 338 B/s | 9 |
+| 2026-09-24 | 30 | 0.574 ms | 1.690 ms | 0.29% | ≈ 822 B/s | 26 |
+
+**Finding → change:** crowded zones clear roughly every 11 seconds, which would have made Golden Gusts (x3) near-constant. A `GoldenCooldown` of 180 s per zone now limits them (tested in `server.spec`).
+
+### Client and device (needs Studio or real hardware)
+| Date | Device | Location | FPS | Memory | Notes |
+|---|---|---|---|---|---|
+| (pending) | | | | | |
 
 Offline structural measurements: map 1,556 parts (346 colliding); debris per rendered zone 876 parts (about 440 in Low Graphics); UI 2,325 instances total across all windows (only the open window is visible).
 

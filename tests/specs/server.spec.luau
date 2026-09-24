@@ -271,6 +271,15 @@ return function(t)
 			expect(zone.golden).toBe(true)
 			expect(zone.clearing).toBe(false)
 			expect(zone.grid.remaining).toBe(zone.grid.capacity)
+			-- the next two clears: golden -> normal, then the cooldown blocks another golden wave
+			GameConfig.GustDelay = 0
+			DebrisService._startClear(2)
+			task.wait(0.05)
+			expect(zone.golden).toBe(false)
+			DebrisService._startClear(2)
+			task.wait(0.05)
+			GameConfig.GustDelay = oldDelay
+			expect(zone.golden).toBe(false)
 		end)
 	end)
 

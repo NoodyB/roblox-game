@@ -37,7 +37,7 @@ updated: 2026-09-24
   2. **Zone access:** being inside a locked zone teleports the player back. Collection is also blocked above 14 studs, which stops flying.
   3. **Sell** if within 10 studs of a pad.
   4. **Collect:** `grid:collect(x, z, radius, power, bagSpace)`. Value = units × zone value × (3 if golden) × (1 + squad bonus). The server credits clear contributions, fires events and rolls for critters.
-  5. At 97% clean the zone clears: contributors get a bonus, a 4 s gust delay runs, the zone refills, and golden alternates.
+  5. At 97% clean the zone clears: contributors get a bonus, a 4 s gust delay runs, and the zone refills. Waves alternate normal and golden, with at most one golden wave per zone every 180 s.
 - **Replication:** changed cells are batched every 0.1 s into one buffer (`u16 count` followed by 4-byte entries: `u8 zone, u16 cell, u8 amount`) sent to ready clients. A new client receives full snapshots in the Hello response. Deltas that arrive before the snapshot are buffered and applied afterwards.
 
 ## Client
@@ -66,7 +66,7 @@ updated: 2026-09-24
 - **Network:** 4 bytes per changed cell. A busy 12-player zone produces roughly 100-300 changes per second, or about 0.4-1.2 KB/s per client (estimate).
 - **Server CPU:** O(players × cells in reach) per 0.2 s tick. Reach tops out around 28 studs, about 70 cells.
 - **Client:** no per-frame work except critter followers. HUD updates at 10 Hz.
-- **Targets:** 60 FPS on a mid-range phone, under 8 ms of server step time with 12 players, and under 350 MB client memory. **None of these is measured yet.** See [[Testing & QA]].
+- **Targets:** 60 FPS on a mid-range phone, under 8 ms of server step time with 12 players, and under 350 MB client memory. **Server script cost is measured** at 0.11 ms per tick with 12 players and 0.57 ms with 30 (see [[Testing & QA]]). Client FPS and memory still need a device.
 
 ## Test harness
 - `tests/harness.luau` mounts `default.project.json` as a virtual instance tree, so modules resolve `script.Parent...` like in Roblox.

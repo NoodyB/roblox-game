@@ -21,7 +21,7 @@ updated: 2026-09-24
 
 ## 3. Mid and long loops
 - **Critters (collection, minutes to weeks).** 24 species, 3 per zone, from Common to Mythic. They are found randomly while cleaning, for free, and the odds appear in the Critter Book. Each gives a bonus: coins %, reach, bag size %, walk speed, or critter luck. Equip 3 (up to 6 with passes). Five duplicates merge into a Golden critter worth 2.5x the bonus. Pity rules guarantee a first critter within about 24 seconds of collecting, and one at least every 900 collecting ticks.
-- **Zone waves (co-op, minutes).** Every zone shows a server-wide "% clean" bar. At 97%, every contributor gets 50% of what they contributed as a bonus. The zone then refills. Waves alternate normal → Golden (x3 value) → normal.
+- **Zone waves (co-op, minutes).** Every zone shows a server-wide "% clean" bar. At 97%, every contributor gets 50% of what they contributed as a bonus. The zone then refills. Waves alternate normal → Golden (x3 value) → normal, with at most one golden wave per zone every 3 minutes, because crowded servers clear zones fast.
 - **Squad bonus.** +10% value per other player within 40 studs in the same zone, up to +30%. This rewards cleaning side by side and feeds the "intentional co-play days" discovery signal.
 - **Rebirth (hours).** It resets coins, tiers and zones, and keeps critters, perks, passes and stats. Each rebirth grants +50% permanent coins and 1 Rebirth Token, with +1 bonus token every 5th rebirth. Cost starts at 5M and grows 2.6x per rebirth.
 - **Perks (tokens).** Golden Touch (+5% coins per level, 20 levels), Deep Pockets (+10% bag), Quick Feet (+1 speed), Critter Whisperer (+10% luck), and Head Start (keep +1 vacuum and bag tier per level after rebirth).
