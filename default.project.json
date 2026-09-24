@@ -2,21 +2,24 @@
   "name": "SweepSquad",
   "tree": {
     "$className": "DataModel",
-
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
       "Shared": {
         "$path": "src/shared"
       }
     },
-
+    "ReplicatedFirst": {
+      "$className": "ReplicatedFirst",
+      "LoadingScreen": {
+        "$path": "src/first/LoadingScreen.client.luau"
+      }
+    },
     "ServerScriptService": {
       "$className": "ServerScriptService",
       "Server": {
         "$path": "src/server"
       }
     },
-
     "StarterPlayer": {
       "$className": "StarterPlayer",
       "$properties": {
@@ -34,7 +37,6 @@
         }
       }
     },
-
     "Workspace": {
       "$className": "Workspace",
       "$properties": {
@@ -42,13 +44,20 @@
         "Gravity": 196.2
       }
     },
-
     "Lighting": {
       "$className": "Lighting",
       "$properties": {
         "Technology": "ShadowMap",
-        "Ambient": [0.38, 0.34, 0.38],
-        "OutdoorAmbient": [0.56, 0.52, 0.54],
+        "Ambient": [
+          0.38,
+          0.34,
+          0.38
+        ],
+        "OutdoorAmbient": [
+          0.56,
+          0.52,
+          0.54
+        ],
         "Brightness": 2.4,
         "ClockTime": 15.2,
         "GeographicLatitude": 32,
@@ -63,8 +72,16 @@
         "$properties": {
           "Density": 0.28,
           "Offset": 0.12,
-          "Color": [0.93, 0.82, 0.72],
-          "Decay": [0.86, 0.58, 0.42],
+          "Color": [
+            0.93,
+            0.82,
+            0.72
+          ],
+          "Decay": [
+            0.86,
+            0.58,
+            0.42
+          ],
           "Glare": 0.25,
           "Haze": 1.1
         }
@@ -83,7 +100,11 @@
           "Saturation": 0.18,
           "Contrast": 0.07,
           "Brightness": 0.02,
-          "TintColor": [1, 0.98, 0.95]
+          "TintColor": [
+            1,
+            0.98,
+            0.95
+          ]
         }
       },
       "SunRays": {
@@ -94,7 +115,6 @@
         }
       }
     },
-
     "SoundService": {
       "$className": "SoundService",
       "$properties": {

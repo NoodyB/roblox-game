@@ -8,6 +8,7 @@ local luau = require("@lune/luau")
 
 local Harness = require("./harness")
 local Mocks = require("./mocks")
+local ClientEnv = require("./clientenv")
 
 local filter = process.args[1]
 
@@ -146,6 +147,7 @@ local function runSpec(fileName)
 	ctx.expect = expect
 	ctx.Harness = Harness
 	ctx.Mocks = Mocks
+	ctx.ClientEnv = ClientEnv
 
 	Harness.reset()
 	local env = table.clone(Harness.globals)

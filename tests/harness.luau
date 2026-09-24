@@ -36,6 +36,7 @@ local function newVNode(name: string, className: string, parent, source: string?
 		path = path,
 		attributes = {},
 		props = {},
+		external = {},
 	}
 	setmetatable(node, {
 		__index = function(self, key)
@@ -53,6 +54,9 @@ local function newVNode(name: string, className: string, parent, source: string?
 				if internals[child].Name == key then
 					return child
 				end
+			end
+			if data.external[key] ~= nil then
+				return data.external[key]
 			end
 			error(string.format("%s is not a valid member of %s", tostring(key), VNodeMethods.GetFullName(self)), 2)
 		end,
@@ -92,7 +96,7 @@ function VNodeMethods.FindFirstChild(self, name)
 			return child
 		end
 	end
-	return nil
+	return internals[self].external[name]
 end
 
 function VNodeMethods.WaitForChild(self, name)
@@ -343,6 +347,11 @@ function Harness.reset()
 		error("Service not mocked in harness: " .. tostring(name), 2)
 	end
 	return game
+end
+
+-- Attach a non-virtual child (e.g. a proxied Lune instance) under a virtual node.
+function Harness.attach(node, name: string, value)
+	internals[node].external[name] = value
 end
 
 function Harness.setService(name: string, value)

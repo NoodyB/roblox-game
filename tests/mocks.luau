@@ -3,6 +3,8 @@
 -- They model the documented semantics that matter for correctness (UpdateAsync transforms that can
 -- cancel by returning nil, serialization copies, request failures, signals), nothing more.
 
+local task = require("@lune/task")
+
 local Mocks = {}
 
 ---------------------------------------------------------------------------------------------------
@@ -11,7 +13,12 @@ local Mocks = {}
 
 function Mocks.signal()
 	local handlers = {}
+	local waiters = {}
 	local sig = {}
+	function sig:Wait()
+		table.insert(waiters, coroutine.running())
+		return coroutine.yield()
+	end
 	function sig:Connect(fn)
 		local entry = { fn = fn, connected = true }
 		table.insert(handlers, entry)
@@ -28,6 +35,11 @@ function Mocks.signal()
 			if entry.connected then
 				entry.fn(...)
 			end
+		end
+		local pending = waiters
+		waiters = {}
+		for _, thread in pending do
+			task.spawn(thread, ...)
 		end
 	end
 	function sig:Once(fn)
