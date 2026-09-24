@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Sweep Squad geometry preview</title>
+<style>html,body{margin:0;background:#000;overflow:hidden}</style>
+<script type="importmap">{ "imports": { "three": "./node_modules/three/build/three.module.js" } }</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from "three";
+
+// Roblox conventions: Y-up, right-handed (same as three.js). Cylinder axis is X.
+// WedgePart: full bottom and back (+Z) faces, slope from front-bottom to back-top.
+function wedgeGeometry() {
+  const v = [
+    // bottom
+    [-0.5,-0.5,-0.5],[0.5,-0.5,-0.5],[0.5,-0.5,0.5], [-0.5,-0.5,-0.5],[0.5,-0.5,0.5],[-0.5,-0.5,0.5],
+    // back
+    [-0.5,-0.5,0.5],[0.5,-0.5,0.5],[0.5,0.5,0.5], [-0.5,-0.5,0.5],[0.5,0.5,0.5],[-0.5,0.5,0.5],
+    // slope
+    [-0.5,-0.5,-0.5],[0.5,0.5,0.5],[0.5,-0.5,-0.5], [-0.5,-0.5,-0.5],[-0.5,0.5,0.5],[0.5,0.5,0.5],
+    // sides
+    [-0.5,-0.5,-0.5],[-0.5,-0.5,0.5],[-0.5,0.5,0.5], [0.5,-0.5,-0.5],[0.5,0.5,0.5],[0.5,-0.5,0.5],
+  ];
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(v.flat(), 3));
+  g.computeVertexNormals();
+  return g;
+}
+
+const GEOMETRY = {
+  block: new THREE.BoxGeometry(1, 1, 1),
+  sphere: new THREE.SphereGeometry(0.5, 28, 18),
+  cylinder: new THREE.CylinderGeometry(0.5, 0.5, 1, 28).rotateZ(Math.PI / 2),
+  wedge: wedgeGeometry(),
+};
+
+const materialCache = new Map();
+function materialFor(part) {
+  const key = part.c.join(",") + part.m + part.t + part.rf;
+  if (materialCache.has(key)) return materialCache.get(key);
+  const color = new THREE.Color(part.c[0], part.c[1], part.c[2]);
+  const params = { color, roughness: 0.6, metalness: 0.0 };
+  switch (part.m) {
+    case "Neon": params.emissive = color; params.emissiveIntensity = 1.4; break;
+    case "Glass": case "Ice": params.transparent = true; params.opacity = 0.55; params.roughness = 0.1; break;
+    case "ForceField": params.transparent = true; params.opacity = 0.35; params.emissive = color; params.emissiveIntensity = 0.6; break;
+    case "Metal": case "Foil": case "DiamondPlate": params.metalness = 0.65; params.roughness = 0.35; break;
+    case "Grass": case "Sand": case "Snow": case "Fabric": case "Pavement": case "Cobblestone": case "Slate": case "Basalt": case "Wood": case "WoodPlanks": case "Brick":
+      params.roughness = 0.95; break;
+    case "SmoothPlastic": params.roughness = 0.5; break;
+  }
+  if (part.rf > 0) { params.metalness = Math.max(params.metalness, 0.35); params.roughness = 0.3; }
+  if (part.t > 0 && !params.transparent) { params.transparent = true; params.opacity = 1 - part.t; }
+  const mat = new THREE.MeshStandardMaterial(params);
+  if (part.k === "wedge") mat.side = THREE.DoubleSide;
+  materialCache.set(key, mat);
+  return mat;
+}
+
+window.renderScene = (data, width, height) => {
+  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(1);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.NoToneMapping;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  document.body.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const sky = new THREE.Color(...data.sky);
+  scene.background = sky;
+  scene.fog = new THREE.Fog(sky, 260, 1100);
+
+  const target = new THREE.Vector3(...data.camera.target);
+  scene.add(new THREE.HemisphereLight(0xfff6ea, 0x6a7f4a, 0.9));
+  const sun = new THREE.DirectionalLight(0xfff0dc, 1.9);
+  sun.position.copy(target).add(new THREE.Vector3(-110, 190, 90));
+  sun.target.position.copy(target);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  const sc = sun.shadow.camera;
+  sc.left = -170; sc.right = 170; sc.top = 170; sc.bottom = -170; sc.near = 1; sc.far = 700;
+  sun.shadow.bias = -0.0006;
+  scene.add(sun, sun.target);
+
+  for (const part of data.parts) {
+    const mesh = new THREE.Mesh(GEOMETRY[part.k] || GEOMETRY.block, materialFor(part));
+    const [sx, sy, sz] = part.s;
+    const r = part.r;
+    const m = new THREE.Matrix4().set(
+      r[0] * sx, r[1] * sy, r[2] * sz, part.p[0],
+      r[3] * sx, r[4] * sy, r[5] * sz, part.p[1],
+      r[6] * sx, r[7] * sy, r[8] * sz, part.p[2],
+      0, 0, 0, 1);
+    mesh.matrixAutoUpdate = false;
+    mesh.matrix.copy(m);
+    const big = Math.max(sx, sz) > 120;
+    mesh.castShadow = !big && part.t < 0.3;
+    mesh.receiveShadow = true;
+    scene.add(mesh);
+  }
+
+  const camera = new THREE.PerspectiveCamera(data.camera.fov, width / height, 0.5, 3000);
+  camera.position.set(...data.camera.pos);
+  camera.lookAt(target);
+  renderer.render(scene, camera);
+  window.renderDone = true;
+};
+window.viewerReady = true;
+</script>
+</body>
+</html>

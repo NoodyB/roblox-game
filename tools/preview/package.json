@@ -1,0 +1,8 @@
+{
+  "name": "sweep-squad-preview",
+  "private": true,
+  "description": "Offline three.js preview renderer for the generated Roblox geometry",
+  "dependencies": {
+    "three": "0.170.0"
+  }
+}

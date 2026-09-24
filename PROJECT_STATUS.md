@@ -22,7 +22,7 @@ Co-op cleaning incremental with 8 themed zones, collectible critters, zone-clear
 - Client: HUD, 7 windows, responsive scaling for phone to PC, effects, sounds, loading screen, PC hotkeys.
 - Analytics: onboarding funnel, economy, progression and custom events.
 - Seasonal events: Haunted Hollow for Halloween 2026 (event critters, palette, hub decor). Promo codes. Invite button, squad chip, VIP chat tags.
-- Tooling: 115 tests, lint, format, place build and validator, economy simulator, promo concept art.
+- Tooling: 117 tests, lint, format, place build and validator, economy simulator, geometry preview renderer (`tools/preview`), promo art including real-render thumbnails.
 
 ## Remaining work
 | Item | Owner | Notes |
@@ -41,7 +41,7 @@ Co-op cleaning incremental with 8 themed zones, collectible critters, zone-clear
 See [Known Issues](docs/Games/Sweep%20Squad/Known%20Issues.md). There are no known failing tests. The main risks are in-engine visual offsets (gear, followers) and real-device performance.
 
 ## Last successful test results (2026-09-24)
-- `./tools/check.sh` passes all steps: stylua ✅, selene 0/0 ✅, **115 passed / 0 failed** ✅, rojo build ✅, place validation ✅.
+- `./tools/check.sh` passes all steps: stylua ✅, selene 0/0 ✅, **117 passed / 0 failed** ✅, rojo build ✅, place validation ✅.
 
 ## Development environment
 - Cloud: Ubuntu 24.04. Toolchain built from crates.io (GitHub downloads are blocked): Rojo 7.7.0, Lune 0.10.5, Selene 0.31.0, StyLua 2.5.2.

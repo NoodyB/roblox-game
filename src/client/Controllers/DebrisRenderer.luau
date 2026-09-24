@@ -62,15 +62,17 @@ local function hash(n: number): number
 	return (x % 1000) / 1000
 end
 
+-- Mound sizes are larger than a cell (6 studs) so neighbouring piles overlap into a continuous,
+-- bumpy carpet; cleaning then leaves a visible trail. `extra` is a small accent on top.
 local SHAPES = {
-	leaf = { main = Vector3.new(4.6, 1.1, 4.6), extra = Vector3.new(1.8, 0.14, 1.1), mat = Enum.Material.Grass },
-	acorn = { main = Vector3.new(4.2, 1.0, 4.2), extra = Vector3.new(0.9, 1.0, 0.9), mat = Enum.Material.Grass },
-	cone = { main = Vector3.new(4.2, 1.0, 4.2), extra = Vector3.new(1.3, 0.9, 0.9), mat = Enum.Material.Grass }, -- cylinder: X = length, Y = Z = diameter
-	shell = { main = Vector3.new(4.0, 0.8, 4.0), extra = Vector3.new(1.3, 0.6, 1.3), mat = Enum.Material.SmoothPlastic },
-	snow = { main = Vector3.new(4.8, 1.6, 4.8), extra = Vector3.new(1.4, 1.2, 1.4), mat = Enum.Material.Snow },
-	sprinkle = { main = Vector3.new(4.0, 0.9, 4.0), extra = Vector3.new(0.35, 1.0, 0.35), mat = Enum.Material.SmoothPlastic },
-	rock = { main = Vector3.new(4.2, 1.2, 4.2), extra = Vector3.new(0.6, 0.6, 0.6), mat = Enum.Material.Slate },
-	star = { main = Vector3.new(4.0, 0.8, 4.0), extra = Vector3.new(0.7, 0.7, 0.7), mat = Enum.Material.SmoothPlastic },
+	leaf = { main = Vector3.new(6.6, 1.6, 6.6), extra = Vector3.new(2.2, 0.16, 1.3), mat = Enum.Material.Grass },
+	acorn = { main = Vector3.new(6.4, 1.5, 6.4), extra = Vector3.new(1.1, 1.3, 1.1), mat = Enum.Material.Grass },
+	cone = { main = Vector3.new(6.4, 1.4, 6.4), extra = Vector3.new(1.5, 1.0, 1.0), mat = Enum.Material.Grass }, -- extra is a cylinder: X = length
+	shell = { main = Vector3.new(6.2, 1.0, 6.2), extra = Vector3.new(1.5, 0.7, 1.5), mat = Enum.Material.SmoothPlastic },
+	snow = { main = Vector3.new(7.0, 2.2, 7.0), extra = Vector3.new(1.6, 1.3, 1.6), mat = Enum.Material.Snow },
+	sprinkle = { main = Vector3.new(6.2, 1.1, 6.2), extra = Vector3.new(0.4, 1.2, 0.4), mat = Enum.Material.SmoothPlastic },
+	rock = { main = Vector3.new(6.4, 1.6, 6.4), extra = Vector3.new(0.7, 0.7, 0.7), mat = Enum.Material.Slate },
+	star = { main = Vector3.new(6.2, 1.0, 6.2), extra = Vector3.new(0.8, 0.8, 0.8), mat = Enum.Material.SmoothPlastic },
 }
 
 -- Debris sizes are non-uniform, and Roblox forces Ball parts to be uniform, so "ball" debris uses a
@@ -110,30 +112,40 @@ local function styleCell(zoneId: number, index: number, parts: CellParts, amount
 		end
 		return
 	end
-	local f = 0.35 + 0.65 * (amount / GameConfig.CellMax)
+	local f = 0.45 + 0.55 * (amount / GameConfig.CellMax)
 	local x, z = grid:cellCenter(index)
 	local h1, h2, h3 = hash(index * 3 + zoneId), hash(index * 7 + 11), hash(index * 13 + 5)
-	x += (h1 - 0.5) * 1.8
-	z += (h2 - 0.5) * 1.8
+	x += (h1 - 0.5) * 3.2
+	z += (h2 - 0.5) * 3.2
 	local colors = if activeEvent and activeEvent.themeZone == zoneId then activeEvent.debris else theme.debris
-	local color = if golden then theme.golden else colors[(index % #colors) + 1]
+	local h4 = hash(index * 17 + zoneId * 5 + 3)
+	local base = colors[math.floor(h4 * #colors) + 1]
+	-- small per-cell shade variation keeps the carpet from looking tiled
+	local shade = 0.9 + 0.2 * h3
+	local color = if golden
+		then theme.golden
+		else Color3.new(math.min(base.R * shade, 1), math.min(base.G * shade, 1), math.min(base.B * shade, 1))
 	local main = parts.main
-	main.Size = shape.main * f
-	main.CFrame = CFrame.new(x, GROUND_TOP + main.Size.Y * 0.32, z) * CFrame.Angles(0, h3 * math.pi * 2, 0)
+	main.Size = Vector3.new(
+		shape.main.X * (0.8 + 0.45 * h1) * f,
+		shape.main.Y * (0.75 + 0.5 * h3) * f,
+		shape.main.Z * (0.8 + 0.45 * h2) * f
+	)
+	main.CFrame = CFrame.new(x, GROUND_TOP + main.Size.Y * 0.2, z) * CFrame.Angles(0, h3 * math.pi * 2, 0)
 	main.Color = color
 	main.Material = if golden then Enum.Material.SmoothPlastic else shape.mat
 	main.Reflectance = if golden then 0.25 else 0
 	main.Transparency = 0
 	local extra = parts.extra
 	if extra then
-		local accent = if golden then Color3.fromRGB(255, 240, 150) else colors[((index + 2) % #colors) + 1]
+		local accent = if golden then Color3.fromRGB(255, 240, 150) else colors[(math.floor(h4 * #colors) + 2) % #colors + 1]
 		extra.Size = shape.extra * math.max(f, 0.6)
 		extra.Color = accent
 		extra.Material = if golden or theme.debrisShape == "star" or theme.debrisShape == "rock"
 			then Enum.Material.Neon
 			else Enum.Material.SmoothPlastic
 		local ox, oz = (h2 - 0.5) * 2.2, (h1 - 0.5) * 2.2
-		extra.CFrame = CFrame.new(x + ox, GROUND_TOP + main.Size.Y * 0.6 + extra.Size.Y * 0.3, z + oz)
+		extra.CFrame = CFrame.new(x + ox, GROUND_TOP + main.Size.Y * 0.62 + extra.Size.Y * 0.2, z + oz)
 			* CFrame.Angles(math.rad(h3 * 40 - 20), h1 * math.pi * 2, math.rad(h2 * 40 - 20))
 		extra.Transparency = 0
 	end

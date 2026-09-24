@@ -225,6 +225,14 @@ local function buildZone(parent: Instance, zoneId: number, refs: MapRefs)
 	local folder = Build.folder(string.format("Zone%d_%s", zoneId, zone.key), parent)
 	folder:SetAttribute("ZoneId", zoneId)
 
+	-- themed biome ground around the zone (between the meadow and the zone floor), so every world
+	-- reads as its own place from a distance
+	Build.block(folder, V(GameConfig.ZoneSpacing, 1, 640), CF(cx, GROUND_TOP - 0.6, 0), Build.shade(theme.border, 0.95), {
+		material = theme.borderMaterial,
+		collide = true,
+		shadow = false,
+		name = "Biome",
+	})
 	Build.block(folder, V(GameConfig.ZoneSize, 1, GameConfig.ZoneSize), CF(cx, GROUND_TOP - 0.5, 0), theme.ground, {
 		material = theme.groundMaterial,
 		collide = true,

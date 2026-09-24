@@ -19,11 +19,12 @@ To test saving in Studio, open *Game Settings → Security* and enable **Studio 
 
 | Command | What it does |
 |---|---|
-| `lune run tests/run` | Runs all 104 automated tests: logic, server, world build and client UI |
+| `lune run tests/run` | Runs all automated tests (117): logic, server, world build and client UI |
 | `lune run tests/run economy` | Runs only the spec files whose name contains "economy" |
 | `./tools/check.sh` | Runs format check, lint, tests, place build and place validation |
 | `./tools/build.sh` | Builds `build/SweepSquad.rbxl` |
 | `lune run tools/simulate_economy.luau [vip]` | Simulates player progression with the real config |
+| `lune run tools/preview/export_scenes.luau` then `NODE_PATH=$(npm root -g) node tools/preview/render.js` | Renders the real generated geometry to `docs/previews/*.png` with three.js. This is a visual check without Studio; run `npm install` in `tools/preview` first |
 | `stylua src tests tools` | Formats the code |
 | `selene src` | Lints the code |
 

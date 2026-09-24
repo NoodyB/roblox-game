@@ -158,10 +158,10 @@ end
 
 builders.umbrella = function(m, base, s)
 	Build.cylinder(m, 6 * s, 0.3 * s, base * CF(0, 3 * s, 0), rgb(240, 240, 240), { collide = true })
-	local colors = { rgb(240, 80, 80), rgb(255, 255, 255) }
-	for i = 0, 7 do
-		Build.wedge(m, V(0.2, 1.2, 3) * s, base * CF(0, 6 * s, 0) * CFrame.Angles(0, rad(i * 45), 0) * CF(0, 0, -1.5 * s), colors[i % 2 + 1], { shadow = true })
-	end
+	-- striped dome canopy: a flattened sphere with a contrasting band and top knob
+	Build.ball(m, V(6, 1.8, 6) * s, base * CF(0, 6.1 * s, 0), rgb(240, 80, 80))
+	Build.cylinder(m, 0.5 * s, 5.2 * s, base * CF(0, 6.2 * s, 0), rgb(255, 255, 255), { shadow = false })
+	Build.ball(m, V(0.6, 0.6, 0.6) * s, base * CF(0, 7.05 * s, 0), rgb(255, 255, 255), { shadow = false })
 	Build.block(m, V(3, 0.3, 5) * s, base * CF(2.5 * s, 0.2 * s, 0), rgb(80, 180, 230), { material = Enum.Material.Fabric, shadow = false })
 end
 

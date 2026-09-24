@@ -11,7 +11,7 @@ Run on 2026-09-24 in the cloud environment (Linux) with Rojo 7.7.0, Lune 0.10.5,
 |---|---|---|
 | Formatting | `stylua --check src tests tools` | ✅ clean |
 | Lint | `selene src` (custom `roblox_min` std) | ✅ 0 errors, 0 warnings |
-| Unit + integration tests | `lune run tests/run` | ✅ **115 passed, 0 failed** |
+| Unit + integration tests | `lune run tests/run` | ✅ **117 passed, 0 failed** |
 | Place build | `rojo build … -o build/SweepSquad.rbxl` | ✅ builds |
 | Place validation | `lune run tools/validate_place.luau` | ✅ 1 server script, 2 client scripts, 60+ modules, all compile |
 
@@ -21,9 +21,24 @@ Run on 2026-09-24 in the cloud environment (Linux) with Rojo 7.7.0, Lune 0.10.5,
 | `modules.spec` (2) | Every script and module compiles; every shared module loads |
 | `logic.spec` (58) | Config integrity, schema migration and sanitizing, stats stacking, economy (buy, unlock, rebirth, perks, packs), DebrisGrid, ZoneLayout, NetCodec, critter odds, pity, golden and equip rules, quests and streaks, formatting, RNG, rate limiter, signals, promo codes, seasonal event windows, odds and drop share |
 | `server.spec` (29) | DataService (create, load, migrate, save, release, live-lock wait and takeover, stale lock, stolen-lock kick, load-failure kick, save retries, shutdown), the collection loop (collect, capacity, sell, locked zones, speed hack, auto-sell, squad bonus, zone clear and golden refill), critters, action dispatcher (whitelist, payload validation, rate limit, upgrade, unlock, quest claim once, rebirth), receipts (grant once, save-before-grant, unknown product or player, storm), event wiring |
-| `world.spec` (12) | Full map build against the Roblox API: gates, prompts, part budget (1,556), anchoring, leaderboards, spawn, sell-pad alignment with server logic; seasonal hub decor; every prop, critter (normal and golden, including event critters) and gear tier |
-| `client.spec` (13) | The whole HUD and all 7 windows built with validated properties (2,325 instances); handshake; state refresh; button clicks send actions; unconfigured products never prompt; debris rendering (876 parts per zone), deltas, golden waves, low-graphics mode; every effect; chat tags; critter followers; the per-frame loops (zone streaming, ambience, tutorial beam and radar, followers) with a character moving between zones |
+| `world.spec` (13) | Full map build against the Roblox API: gates, prompts, part budget (1,556), anchoring, leaderboards, spawn, sell-pad alignment with server logic; seasonal hub decor; every prop, critter (normal and golden, including event critters) and gear tier |
+| `client.spec` (14) | The whole HUD and all 7 windows built with validated properties (2,325 instances); handshake; state refresh; button clicks send actions; unconfigured products never prompt; debris rendering (876 parts per zone), deltas, golden waves, low-graphics mode; every effect; chat tags; critter followers; the per-frame loops (zone streaming, ambience, tutorial beam and radar, followers) with a character moving between zones |
 | `debug.spec` (1) | Studio-only debug attributes |
+
+## Visual verification without Studio (geometry previews)
+`tools/preview/` exports the real generated world through the same modules the game uses: MapBuilder, DebrisRenderer, GearModels and CritterModels. It then renders the scenes with three.js in headless Chromium, following Roblox conventions (Y-up, X-axis cylinders, the wedge profile, sphere meshes). The output is in `docs/previews/`.
+
+| Preview | What it showed and fixed |
+|---|---|
+| `zone1_squad`, `thumb_squad` | Debris was a grid of flat discs → redesigned into an overlapping, varied carpet with visible cleaned trails |
+| `overview` | Coherent layout (hub → corridors → gated zones). Every zone sat on the same green meadow → themed biome ground per zone |
+| `beach_golden` | The golden wave reads clearly. The umbrella canopy looked like a pinwheel → rebuilt as a striped dome |
+| `critters` | All 27 critters are readable and cute. The hedgehog's spikes looked like fence planks → rebuilt as quills |
+| `hub`, `candy`, `volcano` | Shops, fountain, seasonal jack-o'-lanterns and themed props render as intended |
+
+This is **not** the Roblox renderer: lighting, materials and text differ. It checks shapes, placement, proportions and colours only.
+
+**Engine rule found during this pass:** Roblox forces `Ball` parts to a uniform size. Non-uniform spheres now use a Block part with a Sphere `SpecialMesh`, and `world.spec` and `client.spec` enforce the Ball and Cylinder size rules.
 
 ## What has NOT been verified (needs Roblox Studio or devices)
 These are **not** claimed as tested:

@@ -80,9 +80,18 @@ local function blob(m: Model, c: Critters.Critter, base: CFrame, body: Color3, a
 	Build.ball(m, V(1.6, 0.9, 1), base * CF(0, 0.75, -0.8), accent, { material = o.material, name = "Belly" })
 	eyes(m, base, 1.45, -1.05, 0.5, 0.42)
 	if c.extra == "spikes" then
-		for i = 0, 5 do
-			local a = rad(-60 + i * 24)
-			Build.wedge(m, V(0.35, 0.7, 0.5), base * CF(math.sin(a) * 0.9, 1.75, 0.3 + math.cos(a) * 0.3) * CFrame.Angles(rad(-30), a, 0), Build.shade(body, 0.75), { material = o.material, name = "Spike" })
+		-- quills: pointed ellipsoids fanning up and back over the body
+		for row = 0, 1 do
+			for i = 0, 4 do
+				local a = rad(-50 + i * 25)
+				Build.ball(
+					m,
+					V(0.32, 0.32, 1.1),
+					base * CF(math.sin(a) * (0.75 - row * 0.2), 1.55 + row * 0.35, 0.35 + row * 0.35) * CFrame.Angles(rad(35 + row * 15), a, 0),
+					Build.shade(body, 0.7 - row * 0.1),
+					{ material = o.material, name = "Spike" }
+				)
+			end
 		end
 	elseif c.extra == "stem" then
 		Build.cylinder(m, 0.6, 0.3, base * CF(0, 2.1, 0), rgb(100, 150, 60), { name = "Stem" })

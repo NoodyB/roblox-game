@@ -35,7 +35,7 @@ Everything can be earned for free. Clean together, get a Squad Bonus!
 **Genre:** Simulation. **Max players:** 12 (suggested; cleaning a zone needs company but shouldn't feel crowded). **Maturity:** answer the questionnaire honestly. The content is minimal: no violence, blood or romance.
 
 ## Icon and thumbnails
-Concept images are generated in `marketing/`, rendered from HTML with the same palette as the game. Test them against in-game screenshots taken in Studio; real screenshots usually earn more trust.
+Concept images are in `marketing/`. `thumbnail_1-3` are illustrated concepts. `thumbnail_4_real_squad` and `thumbnail_5_real_golden` are composed from **renders of the real game geometry** (`docs/previews/`). A/B test the two groups against each other, and against real Studio screenshots with real avatars once available.
 - **Icon:** a big cartoon vacuum sucking up a swirl of orange leaves, the "SWEEP SQUAD" logo, and a warm gradient.
 - **Thumbnail 1 (loop):** 3-4 avatars vacuuming a leaf-covered yard with a coin burst. Text: "CLEAN EVERYTHING!"
 - **Thumbnail 2 (collection):** a critter lineup (fox, unicorn, whale) with the Golden versions glowing. Text: "24 CRITTERS!"
