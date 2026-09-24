@@ -17,6 +17,7 @@ local WorldView = require(Controllers.WorldView)
 local CritterFollowers = require(Controllers.CritterFollowers)
 local Tutorial = require(Controllers.Tutorial)
 local Input = require(Controllers.Input)
+local ChatTags = require(Controllers.ChatTags)
 
 local Responsive = require(UI.Responsive)
 local HUD = require(UI.HUD)
@@ -41,6 +42,9 @@ WorldView:Init()
 CritterFollowers:Init()
 Tutorial:Init()
 Input:Init()
+pcall(function()
+	ChatTags:Init()
+end)
 
 -- UI layers
 Responsive.start()

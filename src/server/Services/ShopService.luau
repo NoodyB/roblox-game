@@ -72,10 +72,10 @@ function ShopService:Init()
 
 	Net.onAction("Teleport", function(player, zoneId)
 		local profile = DataService.get(player)
-		if not profile or type(zoneId) ~= "number" then
+		-- integer check also rejects NaN/inf (NaN fails every range comparison)
+		if not profile or type(zoneId) ~= "number" or zoneId ~= math.floor(zoneId) or math.abs(zoneId) == math.huge then
 			return false, "Invalid zone"
 		end
-		zoneId = math.floor(zoneId)
 		if zoneId ~= 0 and (zoneId < 1 or zoneId > profile.maxZone) then
 			return false, "Zone is locked"
 		end
@@ -122,6 +122,21 @@ function ShopService:Init()
 			Net.fire("Effect", player, "purchase", { text = perk.name .. " upgraded!" })
 		end
 		return ok, err
+	end)
+
+	Net.onAction("RedeemCode", function(player, code)
+		local profile = DataService.get(player)
+		if not profile then
+			return false, "Loading"
+		end
+		local ok, message = Economy.redeemCode(profile, code, os.time())
+		if not ok then
+			return false, message
+		end
+		PlayerService.refresh(player)
+		Net.fire("Effect", player, "reward", { text = "🎟️ " .. message })
+		Analytics.custom(player, "CodeRedeemed")
+		return true, message
 	end)
 
 	WorldService.GatePrompted:Connect(function(player: Player, zoneId: number)

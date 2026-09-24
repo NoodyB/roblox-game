@@ -6,6 +6,9 @@ local Shared = script.Parent.Parent
 local Upgrades = require(Shared.Config.Upgrades)
 local Zones = require(Shared.Config.Zones)
 local Progression = require(Shared.Config.Progression)
+local Codes = require(Shared.Config.Codes)
+local Format = require(Shared.Util.Format)
+local Critters = require(Shared.Config.Critters)
 local Stats = require(script.Parent.Stats)
 
 local Economy = {}
@@ -147,6 +150,55 @@ function Economy.coinPackAmount(data: any, bags: number): number
 	local zone = Economy.bestZone(data)
 	local capacity = Stats.compute(data).capacity
 	return math.floor(capacity * zone.unitValue * bags * Stats.rebirthMultiplier(data.rebirths))
+end
+
+function Economy.normalizeCode(raw: any): string?
+	if type(raw) ~= "string" or #raw == 0 or #raw > 32 then
+		return nil
+	end
+	local code = string.upper((string.gsub(raw, "%s", "")))
+	if not string.match(code, "^[%w_]+$") then
+		return nil
+	end
+	return code
+end
+
+-- Redeems a promo code. Returns (ok, message).
+function Economy.redeemCode(data: any, raw: any, now: number): (boolean, string)
+	local code = Economy.normalizeCode(raw)
+	local def = code and Codes[code]
+	if not code or not def then
+		return false, "That code doesn't exist"
+	end
+	if def.expires and now > def.expires then
+		return false, "That code has expired"
+	end
+	if data.redeemedCodes[code] then
+		return false, "You already used that code"
+	end
+	local message
+	if def.reward == "coins" then
+		local coins = Economy.coinPackAmount(data, def.bags or 1)
+		data.coins += coins
+		data.stats.lifetimeCoins += coins
+		message = "+" .. Format.abbreviate(coins) .. " coins!"
+	elseif def.reward == "boost" and def.boost and data.boosts[def.boost] ~= nil then
+		data.boosts[def.boost] += def.seconds or 0
+		message = "Boost activated!"
+	elseif def.reward == "critter" and def.critter and Critters.ById[def.critter] then
+		local entry = data.critters[def.critter]
+		if not entry then
+			entry = { count = 0, golden = 0 }
+			data.critters[def.critter] = entry
+		end
+		entry.count += 1
+		data.discovered[def.critter] = true
+		message = Critters.ById[def.critter].name .. " joined your squad!"
+	else
+		return false, "That code can't be used right now"
+	end
+	data.redeemedCodes[code] = true
+	return true, message
 end
 
 return Economy

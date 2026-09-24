@@ -39,9 +39,11 @@ return function(request: (string, any?) -> (boolean, any))
 	end
 
 	local function build(content: Frame)
-		C.list(Enum.FillDirection.Vertical, 10).Parent = content
+		local list = C.scroll({ Parent = content })
+		C.list(Enum.FillDirection.Vertical, 10).Parent = list
+		C.padding(4, 6).Parent = list
 		for index, option in OPTIONS do
-			local card = C.card({ Size = UDim2.new(1, 0, 0, 64), LayoutOrder = index, Parent = content })
+			local card = C.card({ Size = UDim2.new(1, -12, 0, 64), LayoutOrder = index, Parent = list })
 			C.label({ Text = option.label, Size = UDim2.new(1, -170, 0, 32), Position = UDim2.fromOffset(16, 16), TextXAlignment = Enum.TextXAlignment.Left, Parent = card })
 			local key = option.key
 			toggles[key] = C.button({
@@ -57,13 +59,45 @@ return function(request: (string, any?) -> (boolean, any))
 				end,
 			})
 		end
+		local codeCard = C.card({ Size = UDim2.new(1, -12, 0, 64), LayoutOrder = 10, Parent = list })
+		C.label({ Text = "🎟️ Code", Size = UDim2.fromOffset(110, 32), Position = UDim2.fromOffset(16, 16), TextXAlignment = Enum.TextXAlignment.Left, Parent = codeCard })
+		local box = C.new("TextBox", {
+			Size = UDim2.new(1, -300, 0, 44),
+			Position = UDim2.fromOffset(130, 10),
+			BackgroundColor3 = Colors.BackgroundDark,
+			Font = Theme.Fonts.Bold,
+			PlaceholderText = "Enter a code",
+			Text = "",
+			TextScaled = true,
+			TextColor3 = Colors.Text,
+			ClearTextOnFocus = false,
+			Parent = codeCard,
+		}, { C.corner(10), C.padding(6, 10) })
+		C.button({
+			Text = "Redeem",
+			Size = UDim2.fromOffset(140, 46),
+			Position = UDim2.new(1, -14, 0.5, -3),
+			AnchorPoint = Vector2.new(1, 0.5),
+			Color = Colors.Purple,
+			DarkColor = Colors.PurpleDark,
+			Parent = codeCard,
+			OnClick = function()
+				if box.Text ~= "" then
+					local ok = request("RedeemCode", box.Text)
+					if ok then
+						box.Text = ""
+					end
+				end
+			end,
+		})
+
 		skipButton = C.button({
 			Text = "Skip tutorial",
 			Size = UDim2.fromOffset(220, 48),
 			Color = Colors.Grey,
 			DarkColor = Colors.GreyDark,
 			LayoutOrder = 20,
-			Parent = content,
+			Parent = list,
 			OnClick = function()
 				request("SkipTutorial")
 			end,
@@ -75,7 +109,7 @@ return function(request: (string, any?) -> (boolean, any))
 			Size = UDim2.new(1, 0, 0, 24),
 			LayoutOrder = 30,
 			Visible = false,
-			Parent = content,
+			Parent = list,
 		})
 		C.label({
 			Text = GameConfig.GameName .. " v" .. GameConfig.Version,
@@ -83,7 +117,7 @@ return function(request: (string, any?) -> (boolean, any))
 			TextColor3 = Colors.TextLight,
 			Size = UDim2.new(1, 0, 0, 20),
 			LayoutOrder = 40,
-			Parent = content,
+			Parent = list,
 		})
 	end
 

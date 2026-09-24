@@ -34,6 +34,7 @@ export type Profile = {
 	streak: { lastDay: number, count: number, claimedDay: number },
 	boosts: { coins2x: number, collect2x: number },
 	receipts: { string },
+	redeemedCodes: { [string]: boolean },
 	stats: {
 		lifetimeCoins: number,
 		lifetimeUnits: number,
@@ -69,6 +70,7 @@ local DEFAULT: Profile = {
 	streak = { lastDay = -1, count = 0, claimedDay = -1 },
 	boosts = { coins2x = 0, collect2x = 0 },
 	receipts = {},
+	redeemedCodes = {},
 	stats = {
 		lifetimeCoins = 0,
 		lifetimeUnits = 0,
@@ -195,6 +197,16 @@ function DataSchema.sanitize(data: any): Profile
 		end
 	end
 	data.receipts = receipts
+
+	local codes = {}
+	if type(data.redeemedCodes) == "table" then
+		for code, value in data.redeemedCodes do
+			if type(code) == "string" and value == true and #code <= 32 then
+				codes[code] = true
+			end
+		end
+	end
+	data.redeemedCodes = codes
 
 	data.boosts.coins2x = finiteNumber(data.boosts.coins2x, 0, 0, 60 * 60 * 24 * 30)
 	data.boosts.collect2x = finiteNumber(data.boosts.collect2x, 0, 0, 60 * 60 * 24 * 30)
